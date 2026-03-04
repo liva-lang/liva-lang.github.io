@@ -1,0 +1,485 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmgram/main/tmgram.schema.json",
+    "name": "Liva",
+    "scopeName": "source.liva",
+    "fileTypes": [".liva"],
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#import-statement"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#literals"
+        },
+        {
+            "include": "#class-interface-declaration"
+        },
+        {
+            "include": "#keywords"
+        },
+        {
+            "include": "#types"
+        },
+        {
+            "include": "#identifiers"
+        },
+        {
+            "include": "#operators"
+        },
+        {
+            "include": "#punctuation"
+        }
+    ],
+    "repository": {
+        "import-statement": {
+            "patterns": [
+                {
+                    "comment": "Import statement with from clause",
+                    "match": "\\b(import)\\s+\\{([^}]+)\\}\\s+(from)\\s+(\"[^\"]+\")",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.liva"
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "match": "\\b\\w+\\b",
+                                    "name": "entity.name.function.liva"
+                                }
+                            ]
+                        },
+                        "3": {
+                            "name": "keyword.other.liva"
+                        },
+                        "4": {
+                            "name": "string.quoted.double.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Wildcard import",
+                    "match": "\\b(import)\\s+(\\*)\\s+(from)\\s+(\"[^\"]+\")",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.liva"
+                        },
+                        "2": {
+                            "name": "constant.language.liva"
+                        },
+                        "3": {
+                            "name": "keyword.other.liva"
+                        },
+                        "4": {
+                            "name": "string.quoted.double.liva"
+                        }
+                    }
+                }
+            ]
+        },
+        "class-interface-declaration": {
+            "patterns": [
+                {
+                    "comment": "Enum declaration: enum Name { ... }",
+                    "match": "\\b(enum)\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\{",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.liva"
+                        },
+                        "2": {
+                            "name": "entity.name.type.enum.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Data class declaration: data Name { ... }",
+                    "match": "\\b(data)\\s+([A-Z][a-zA-Z0-9_]*)\\s*\\{",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.liva"
+                        },
+                        "2": {
+                            "name": "entity.name.type.class.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Class or interface implementing other interfaces",
+                    "match": "\\b([A-Z][a-zA-Z0-9_]*)\\s*:\\s*([A-Z][a-zA-Z0-9_,\\s]*)\\s*\\{",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.class.liva"
+                        },
+                        "2": {
+                            "name": "entity.name.type.interface.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Class or interface declaration",
+                    "match": "\\b([A-Z][a-zA-Z0-9_]*)\\s*\\{",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.class.liva"
+                        }
+                    }
+                }
+            ]
+        },
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.double-slash.liva",
+                    "match": "//.*$"
+                },
+                {
+                    "name": "comment.block.liva",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                }
+            ]
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "comment": "String template with interpolation $\"text {expr}\"",
+                    "name": "string.template.liva",
+                    "begin": "\\$\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "meta.embedded.expression.liva",
+                            "begin": "\\{",
+                            "end": "\\}",
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                },
+                                {
+                                    "include": "#keywords"
+                                },
+                                {
+                                    "include": "#identifiers"
+                                },
+                                {
+                                    "include": "#operators"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "constant.character.escape.liva",
+                            "match": "\\\\."
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.double.liva",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.liva",
+                            "match": "\\\\."
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.single.liva",
+                    "begin": "'",
+                    "end": "'",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.liva",
+                            "match": "\\\\."
+                        }
+                    ]
+                }
+            ]
+        },
+        "literals": {
+            "patterns": [
+                {
+                    "comment": "Floating point literals",
+                    "name": "constant.numeric.float.liva",
+                    "match": "\\b\\d[\\d_]*\\.\\d[\\d_]*([eE][+-]?\\d+)?\\b"
+                },
+                {
+                    "comment": "Integer literals (decimal)",
+                    "name": "constant.numeric.integer.decimal.liva",
+                    "match": "\\b\\d[\\d_]*\\b"
+                },
+                {
+                    "comment": "Hexadecimal literals",
+                    "name": "constant.numeric.integer.hexadecimal.liva",
+                    "match": "\\b0[xX][0-9a-fA-F_]+\\b"
+                },
+                {
+                    "comment": "Binary literals",
+                    "name": "constant.numeric.integer.binary.liva",
+                    "match": "\\b0[bB][01_]+\\b"
+                },
+                {
+                    "comment": "Boolean literals",
+                    "name": "constant.language.boolean.liva",
+                    "match": "\\b(true|false)\\b"
+                },
+                {
+                    "comment": "Wildcard pattern (underscore)",
+                    "name": "constant.language.wildcard.liva",
+                    "match": "\\b_\\b"
+                },
+                {
+                    "comment": "Null/None literal",
+                    "name": "constant.language.null.liva",
+                    "match": "\\b(null|None)\\b"
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "comment": "Control flow keywords",
+                    "name": "keyword.control.flow.liva",
+                    "match": "\\b(if|else|while|for|in|switch|case|default|return|break|continue)\\b"
+                },
+                {
+                    "comment": "Fail keyword - special error handling",
+                    "name": "keyword.control.flow.fail.liva",
+                    "match": "\\bfail\\b"
+                },
+                {
+                    "comment": "Concurrency keywords - async/par/task/fire/await",
+                    "name": "keyword.control.concurrency.liva",
+                    "match": "\\b(async|await|par|task|fire)\\b"
+                },
+                {
+                    "comment": "Parallel execution policies",
+                    "name": "keyword.control.parallel.liva",
+                    "match": "\\b(parvec|with|ordered|chunk|threads|simdWidth|prefetch|reduction|schedule|detect)\\b"
+                },
+                {
+                    "comment": "Declaration keywords",
+                    "name": "keyword.declaration.liva",
+                    "match": "\\b(let|const|enum|data|constructor|this)\\b"
+                },
+                {
+                    "comment": "Module and import keywords",
+                    "name": "keyword.other.liva",
+                    "match": "\\b(import|from|use|rust|type|test|as|move)\\b"
+                },
+                {
+                    "comment": "Execution mode keywords",
+                    "name": "keyword.other.execution.liva",
+                    "match": "\\b(seq|vec|auto|safe|fast|static|dynamic)\\b"
+                },
+                {
+                    "comment": "Error handling keywords",
+                    "name": "keyword.control.exception.liva",
+                    "match": "\\b(throw|try|catch|Err|Ok)\\b"
+                },
+                {
+                    "comment": "Logical operators - and/or/not",
+                    "name": "keyword.operator.logical.liva",
+                    "match": "\\b(and|or|not)\\b"
+                }
+            ]
+        },
+        "types": {
+            "patterns": [
+                {
+                    "name": "support.type.primitive.liva",
+                    "match": "\\b(number|float|bool|char|string|bytes|i8|i16|i32|i64|i128|isize|u8|u16|u32|u64|u128|usize|f32|f64)\\b"
+                },
+                {
+                    "comment": "Trait aliases - Numeric, Comparable, Number, Printable",
+                    "name": "support.type.trait.alias.liva",
+                    "match": "\\b(Numeric|Comparable|Number|Printable)\\b"
+                },
+                {
+                    "comment": "Granular trait names",
+                    "name": "support.type.trait.liva",
+                    "match": "\\b(Add|Sub|Mul|Div|Rem|Neg|Eq|Ord|Display|Debug|Clone|Copy|Default|Hash|PartialEq|PartialOrd)\\b"
+                },
+                {
+                    "name": "entity.name.type.liva",
+                    "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+                }
+            ]
+        },
+        "identifiers": {
+            "patterns": [
+                {
+                    "comment": "Console namespace and methods",
+                    "match": "\\b(console)\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "name": "support.class.console.liva"
+                        },
+                        "2": {
+                            "name": "support.function.console.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "JSON namespace and methods",
+                    "match": "\\b(JSON)\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "name": "support.class.json.liva"
+                        },
+                        "2": {
+                            "name": "support.function.json.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "File namespace and methods",
+                    "match": "\\b(File)\\s*\\.\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "name": "support.class.file.liva"
+                        },
+                        "2": {
+                            "name": "support.function.file.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Built-in functions",
+                    "match": "\\b(print|println|parseInt|parseFloat|toString|length|push|pop)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "name": "support.function.builtin.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Function definitions with arrow syntax",
+                    "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.function.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Function calls",
+                    "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.function.call.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Private identifiers (single underscore)",
+                    "name": "variable.language.private.liva",
+                    "match": "_[a-zA-Z_][a-zA-Z0-9_]*\\b"
+                },
+                {
+                    "comment": "Method reference operator (object::method)",
+                    "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(::)\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "variable.other.object.liva"
+                        },
+                        "2": {
+                            "name": "keyword.operator.method-reference.liva"
+                        },
+                        "3": {
+                            "name": "entity.name.function.method-reference.liva"
+                        }
+                    }
+                },
+                {
+                    "comment": "Regular identifiers",
+                    "name": "variable.other.liva",
+                    "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+                }
+            ]
+        },
+        "operators": {
+            "patterns": [
+                {
+                    "comment": "Method reference operator",
+                    "name": "keyword.operator.method-reference.liva",
+                    "match": "::"
+                },
+                {
+                    "comment": "Arrow function operator",
+                    "name": "keyword.operator.arrow.liva",
+                    "match": "=>"
+                },
+                {
+                    "comment": "Type annotation arrow",
+                    "name": "keyword.operator.type.liva",
+                    "match": "->"
+                },
+                {
+                    "comment": "Union type operator (in type context)",
+                    "name": "keyword.operator.type.union.liva",
+                    "match": "(?<=:)\\s*\\w+\\s*(\\|)(?=\\s*\\w+)"
+                },
+                {
+                    "comment": "Inclusive range operator",
+                    "name": "keyword.operator.range.inclusive.liva",
+                    "match": "\\.\\.="
+                },
+                {
+                    "comment": "Range operator",
+                    "name": "keyword.operator.range.liva",
+                    "match": "\\.\\."
+                },
+                {
+                    "comment": "Comparison operators",
+                    "name": "keyword.operator.comparison.liva",
+                    "match": "(==|!=|<=|>=|<|>)"
+                },
+                {
+                    "comment": "Logical operators (symbols)",
+                    "name": "keyword.operator.logical.liva",
+                    "match": "(&&|\\|\\||!)"
+                },
+                {
+                    "comment": "Arithmetic operators",
+                    "name": "keyword.operator.arithmetic.liva",
+                    "match": "(\\+|\\-|\\*|/|%)"
+                },
+                {
+                    "comment": "Assignment operators",
+                    "name": "keyword.operator.assignment.liva",
+                    "match": "(=|\\+=|\\-=|\\*=|/=|%=)"
+                },
+                {
+                    "comment": "Bitwise operators",
+                    "name": "keyword.operator.bitwise.liva",
+                    "match": "(&|\\||\\^|<<|>>|~)"
+                }
+            ]
+        },
+        "punctuation": {
+            "patterns": [
+                {
+                    "name": "punctuation.separator.liva",
+                    "match": "(;|,|:)"
+                },
+                {
+                    "name": "punctuation.section.liva",
+                    "match": "(\\{|\\}|\\[|\\]|\\(|\\))"
+                },
+                {
+                    "name": "keyword.operator.access.liva",
+                    "match": "\\."
+                },
+                {
+                    "name": "keyword.operator.optional.liva",
+                    "match": "\\?"
+                }
+            ]
+        }
+    }
+}

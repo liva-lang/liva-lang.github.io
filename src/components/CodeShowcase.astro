@@ -1,0 +1,148 @@
+---
+const examples = [
+  {
+    title: 'Error Handling',
+    subtitle: 'No exceptions — errors are explicit values',
+    code: `divide(a: number, b: number) {
+    if b == 0 { fail "Division by zero" }
+    return a / b
+}
+
+main() {
+    let result, err = divide(10, 0)
+    if err {
+        print($"Error: {err}")
+    } else {
+        print($"Result: {result}")
+    }
+}`,
+  },
+  {
+    title: 'Pattern Matching',
+    subtitle: 'Powerful switch expressions with destructuring',
+    code: `enum Shape {
+    Circle(radius: number),
+    Rectangle(w: number, h: number),
+    Point
+}
+
+area(s: Shape): number => switch s {
+    Shape.Circle(r) => 3.14159 * r * r,
+    Shape.Rectangle(w, h) => w * h,
+    Shape.Point => 0
+}
+
+main() {
+    let s = Shape.Circle(5)
+    print($"Area: {area(s)}")  // Area: 78.539
+}`,
+  },
+  {
+    title: 'Concurrency',
+    subtitle: 'async for I/O, par for CPU — simple and explicit',
+    code: `main() {
+    // Async I/O (non-blocking)
+    let data = async fetchFromAPI()
+
+    // Parallel CPU work
+    let result = par heavyCalculation()
+
+    // Fire and forget
+    fire async logEvent("started")
+
+    // Task handle
+    let t = task async fetchUser(1)
+    let user = await t
+
+    print($"Got: {user}")
+}`,
+  },
+  {
+    title: 'Classes & Interfaces',
+    subtitle: 'Clean OOP with interface contracts',
+    code: `Serializable {
+    toJSON(): string
+}
+
+data User {
+    name: string
+    email: string
+}
+
+User : Serializable {
+    constructor(name: string, email: string) {
+        this.name = name
+        this.email = email
+    }
+
+    toJSON(): string =>
+        $"{\\"name\\": \\"{this.name}\\"}"
+}`,
+  },
+  {
+    title: 'Functional Collections',
+    subtitle: 'Map, filter, reduce — chainable and familiar',
+    code: `main() {
+    let users = ["Alice", "Bob", "Charlie", "Dave"]
+
+    // Point-free: pass functions directly
+    users.forEach(print)
+
+    let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    let result = nums
+        .filter(x => x % 2 == 0)
+        .map(x => x * x)
+        .reduce((a, b) => a + b, 0)
+
+    print($"Sum of even squares: {result}")
+}`,
+  },
+  {
+    title: 'File I/O & HTTP',
+    subtitle: 'Built-in stdlib for real-world apps',
+    code: `main() {
+    // Read a config file
+    let config, err = File.read("config.json")
+    if err { fail $"Cannot read config: {err}" }
+
+    // Parse JSON
+    let data, jsonErr = JSON.parse(config)
+    if jsonErr { fail "Invalid JSON" }
+
+    // HTTP request (async)
+    let resp, httpErr = async HTTP.get(
+        "https://api.example.com/data"
+    )
+    if httpErr { fail httpErr }
+
+    print($"Status: {resp.status}")
+}`,
+  },
+];
+---
+
+<section id="code" class="py-24 md:py-32 bg-surface-light/30">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        Code that speaks for itself
+      </h2>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+        Real Liva code — not pseudo-code. Every example here compiles and runs.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      {examples.map((ex) => (
+        <div class="rounded-2xl bg-surface border border-white/5 overflow-hidden hover:border-liva-500/15 transition-colors">
+          <div class="px-5 py-4 border-b border-white/5">
+            <h3 class="text-white font-semibold">{ex.title}</h3>
+            <p class="text-gray-500 text-sm mt-0.5">{ex.subtitle}</p>
+          </div>
+          <pre class="p-5 text-[13px] leading-relaxed overflow-x-auto"><code class="font-mono text-gray-300">{ex.code}</code></pre>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

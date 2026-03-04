@@ -1,0 +1,97 @@
+---
+const tabs = [
+  {
+    id: 'debian',
+    label: 'Ubuntu / Debian',
+    icon: '🐧',
+    commands: [
+      'curl -LO https://github.com/liva-lang/livac/releases/latest/download/livac_amd64.deb',
+      'sudo dpkg -i livac_amd64.deb',
+      'livac --version',
+    ],
+  },
+  {
+    id: 'mac',
+    label: 'macOS',
+    icon: '🍎',
+    commands: [
+      '# Apple Silicon (M1/M2/M3/M4)',
+      'curl -L https://github.com/liva-lang/livac/releases/latest/download/livac-darwin-arm64.tar.gz | tar xz',
+      'sudo mv livac /usr/local/bin/',
+      'livac --version',
+    ],
+  },
+  {
+    id: 'source',
+    label: 'From Source',
+    icon: '🔧',
+    commands: [
+      'git clone https://github.com/liva-lang/livac.git',
+      'cd livac',
+      'cargo build --release',
+      'cargo install --path .',
+      'livac --version',
+    ],
+  },
+];
+---
+
+<section id="install" class="py-24 md:py-32 bg-surface-light/30">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        Get started in seconds
+      </h2>
+      <p class="text-gray-400 text-lg">
+        Pre-built binaries for Linux, macOS, and Windows. Or build from source.
+      </p>
+    </div>
+
+    <!-- Simple tab display -->
+    {tabs.map((tab) => (
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-lg">{tab.icon}</span>
+          <h3 class="text-white font-semibold">{tab.label}</h3>
+        </div>
+        <div class="rounded-xl bg-surface border border-white/5 overflow-hidden">
+          <pre class="p-5 text-sm leading-relaxed overflow-x-auto"><code class="font-mono text-gray-300">{tab.commands.map(cmd =>
+            cmd.startsWith('#')
+              ? <span class="text-gray-500">{cmd + '\n'}</span>
+              : <><span class="text-liva-400 select-none">$ </span>{cmd + '\n'}</>
+          )}</code></pre>
+        </div>
+      </div>
+    ))}
+
+    <!-- Quick start after install -->
+    <div class="mt-12 text-center">
+      <p class="text-gray-400 mb-4">Then write your first program:</p>
+      <div class="max-w-md mx-auto rounded-xl bg-surface border border-white/5 overflow-hidden">
+        <pre class="p-5 text-sm leading-relaxed overflow-x-auto text-left"><code class="font-mono"><span class="text-gray-500"># hello.liva</span>
+<span class="text-gray-300">main() => print("Hello, Liva!")</span>
+
+<span class="text-liva-400 select-none">$ </span><span class="text-gray-300">livac hello.liva --run</span>
+<span class="text-emerald-400">Hello, Liva!</span></code></pre>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a
+        href="https://github.com/liva-lang/livac/releases/latest"
+        target="_blank"
+        class="px-6 py-3 rounded-xl bg-gradient-to-r from-liva-500 to-liva-600 text-white font-semibold text-sm shadow-lg shadow-liva-500/25 hover:shadow-liva-500/40 hover:brightness-110 transition-all"
+      >
+        Download Latest Release
+      </a>
+      <a
+        href="https://github.com/liva-lang/livac/blob/main/docs/QUICK_REFERENCE.md"
+        target="_blank"
+        class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-semibold text-sm hover:bg-white/10 hover:text-white transition-all"
+      >
+        Read the Docs
+      </a>
+    </div>
+  </div>
+</section>
