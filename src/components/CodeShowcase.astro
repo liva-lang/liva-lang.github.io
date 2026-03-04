@@ -1,25 +1,107 @@
 ---
 const examples = [
   {
-    title: 'Error Handling',
-    subtitle: 'No exceptions — errors are explicit values',
-    code: `divide(a: number, b: number) {
-    if b == 0 { fail "Division by zero" }
-    return a / b
-}
+    title: 'Types & Operators',
+    subtitle: 'Type inference, Rust numeric types, ranges, ternary',
+    code: `const MAX_RETRIES = 3
 
 main() {
-    let result, err = divide(10, 0)
-    if err {
-        print($"Error: {err}")
-    } else {
-        print($"Result: {result}")
-    }
+    let name = "Alice"           // string (inferred)
+    let age: number = 25         // explicit i32
+    let height: float = 1.75     // f64
+    let active = true            // bool
+    let scores = [95, 87, 92]    // [number]
+    let maybe: number? = null    // optional
+
+    let status = age >= 18 ? "Adult" : "Minor"
+    let canVote = age >= 18 and active
+    let isOdd = age % 2 != 0
+
+    print($"{name}: {status}, height={height}")
 }`,
   },
   {
-    title: 'Pattern Matching',
-    subtitle: 'Powerful switch expressions with destructuring',
+    title: 'Functions & One-liners',
+    subtitle: 'Arrow syntax, defaults, references, tuples',
+    code: `// Arrow functions (one-liners)
+square(x: number): number => x * x
+greet(name: string = "World") => $"Hello, {name}!"
+
+// Block function
+clamp(val: number, lo: number, hi: number): number {
+    if val < lo { return lo }
+    if val > hi { return hi }
+    return val
+}
+
+// Tuple return
+getPoint(): (int, int) => (10, 20)
+
+main() {
+    let nums = [1, 2, 3, 4, 5]
+    nums.forEach(print)       // point-free reference
+    let doubled = nums.map(x => x * 2)
+
+    let p = getPoint()
+    print($"x={p.0}, y={p.1}")
+}`,
+  },
+  {
+    title: 'Loops & Control Flow',
+    subtitle: 'for, while, ranges, break/continue, one-liner =>',
+    code: `main() {
+    // Range loops
+    for i in 1..=5 => print(i)     // 1,2,3,4,5
+
+    // Array iteration
+    let names = ["Alice", "Bob", "Charlie"]
+    for name in names {
+        print($"Hi, {name}!")
+    }
+
+    // While with break/continue
+    let n = 0
+    while n < 20 {
+        n = n + 1
+        if n % 2 == 0 { continue }
+        if n > 10 { break }
+        print($"Odd: {n}")
+    }
+
+    // One-liner if
+    if names.length() > 0 => print("Not empty!")
+}`,
+  },
+  {
+    title: 'Classes & Visibility',
+    subtitle: '_prefix = private — no keywords needed',
+    code: `Account {
+    owner: string              // public field
+    _balance: number           // private (_ prefix)
+
+    constructor(owner: string, initial: number) {
+        this.owner = owner
+        this._balance = initial
+    }
+
+    deposit(amount: number) {
+        if amount <= 0 { fail "Invalid amount" }
+        this._balance = this._balance + amount
+    }
+
+    getBalance(): number => this._balance
+    _log(msg: string) => print($"[LOG] {msg}")
+}
+
+main() {
+    let acc = Account("Alice", 1000)
+    acc.deposit(500)
+    print($"{acc.owner}: {acc.getBalance()}")
+}`,
+  },
+  {
+    title: 'Enums & Pattern Matching',
+    subtitle: 'Algebraic types, switch expressions, guards',
     code: `enum Shape {
     Circle(radius: number),
     Rectangle(w: number, h: number),
@@ -32,135 +114,95 @@ area(s: Shape): number => switch s {
     Shape.Point => 0
 }
 
+describe(s: Shape): string => switch s {
+    Shape.Circle(r) if r > 100 => "Huge circle",
+    Shape.Circle(r) => $"Circle r={r}",
+    _ => "Other shape"
+}
+
 main() {
-    let s = Shape.Circle(5)
-    print($"Area: {area(s)}")  // Area: 78.539
+    let shapes = [Shape.Circle(5), Shape.Rectangle(3, 4)]
+    for s in shapes => print($"Area: {area(s)}")
+}`,
+  },
+  {
+    title: 'Error Handling',
+    subtitle: 'fail, error binding, or fail / or default',
+    code: `parsePort(input: string): number {
+    let port, err = Number.parse(input)
+    if err { fail $"Invalid port: {input}" }
+    if port < 1 or port > 65535 {
+        fail "Port out of range"
+    }
+    return port
+}
+
+main() {
+    // Error binding
+    let port, err = parsePort("8080")
+    if err {
+        print($"Error: {err}")
+    } else {
+        print($"Port: {port}")
+    }
+
+    // or fail — propagate errors
+    let cfg = File.read("config.json") or fail "No config"
+    // or default — fallback value
+    let p = parsePort("abc") or default 3000
+}`,
+  },
+  {
+    title: 'Functional Collections',
+    subtitle: 'map, filter, reduce — chainable and familiar',
+    code: `isEven(x: number): bool => x % 2 == 0
+
+main() {
+    let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    let result = nums
+        .filter(isEven)              // point-free ref
+        .map(x => x * x)            // lambda
+        .reduce((a, b) => a + b, 0)
+
+    print($"Sum of even squares: {result}")  // 220
+
+    // Destructuring
+    let [first, , third] = ["a", "b", "c"]
+    let [head, ...tail] = nums
+    print($"head={head}, tail has {tail.length()} items")
+
+    // String join
+    let csv = ["Alice", "Bob", "Charlie"].join(", ")
 }`,
   },
   {
     title: 'Concurrency',
-    subtitle: 'async for I/O, par for CPU — simple and explicit',
-    code: `main() {
-    // Async I/O (non-blocking)
-    let data = async fetchFromAPI()
+    subtitle: 'async for I/O, par for CPU — no colored functions',
+    code: `// No async keyword in declaration — auto-inferred
+fetchUser(id: number): string {
+    let resp, err = async HTTP.get(
+        $"https://api.example.com/users/{id}"
+    )
+    if err { fail err }
+    return resp.body
+}
+
+main() {
+    // Async I/O
+    let user = async fetchUser(1)
 
     // Parallel CPU work
-    let result = par heavyCalculation()
+    let result = par heavyCalculation(1000)
 
     // Fire and forget
     fire async logEvent("started")
 
     // Task handle
-    let t = task async fetchUser(1)
-    let user = await t
+    let t = task async fetchUser(2)
+    let user2 = await t
 
     print($"Got: {user}")
-}`,
-  },
-  {
-    title: 'Classes & Interfaces',
-    subtitle: 'Clean OOP with interface contracts',
-    code: `Serializable {
-    toJSON(): string
-}
-
-User : Serializable {
-    name: string
-    email: string
-
-    constructor(name: string, email: string) {
-        this.name = name
-        this.email = email
-    }
-
-    toJSON(): string =>
-        $"{\\"name\\": \\"{this.name}\\"}"
-}
-
-main() {
-    let u = User("Alice", "alice@mail.com")
-    print(u.toJSON())
-}`,
-  },
-  {
-    title: 'Functional Collections',
-    subtitle: 'Map, filter, reduce — chainable and familiar',
-    code: `main() {
-    let users = ["Alice", "Bob", "Charlie", "Dave"]
-
-    // Point-free: pass functions directly
-    users.forEach(print)
-
-    let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-    let result = nums
-        .filter(x => x % 2 == 0)
-        .map(x => x * x)
-        .reduce((a, b) => a + b, 0)
-
-    print($"Sum of even squares: {result}")
-}`,
-  },
-  {
-    title: 'Test Framework',
-    subtitle: 'Jest-like API with describe/test/expect',
-    code: `add(a: number, b: number): number => a + b
-
-describe("Math operations") {
-    test("addition works") {
-        expect(add(2, 3)).toBe(5)
-        expect(add(-1, 1)).toBe(0)
-    }
-
-    test("handles large numbers") {
-        expect(add(1000000, 1)).toBe(1000001)
-    }
-}
-
-// Run: livac math_test.liva --test`,
-  },
-  {
-    title: 'Enum Types',
-    subtitle: 'Algebraic data types with exhaustive matching',
-    code: `enum Result {
-    Ok(value: string),
-    Err(message: string)
-}
-
-parseConfig(raw: string): Result {
-    if raw.length() == 0 {
-        return Result.Err("Empty config")
-    }
-    return Result.Ok(raw)
-}
-
-main() {
-    let r = parseConfig("")
-    switch r {
-        Result.Ok(v) => print($"Config: {v}"),
-        Result.Err(e) => print($"Error: {e}")
-    }
-}`,
-  },
-  {
-    title: 'File I/O & HTTP',
-    subtitle: 'Built-in stdlib for real-world apps',
-    code: `main() {
-    // Read a config file
-    let config, err = File.read("config.json")
-    if err { fail $"Cannot read config: {err}" }
-
-    // Parse JSON
-    let data, jsonErr = JSON.parse(config)
-    if jsonErr { fail "Invalid JSON" }
-
-    // HTTP request (async)
-    let resp, httpErr = async HTTP.get(
-        "https://api.example.com/data"
-    )
-    if httpErr { fail httpErr }
-
-    print($"Status: {resp.status}")
 }`,
   },
 ];
