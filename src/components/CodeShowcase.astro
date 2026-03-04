@@ -64,12 +64,10 @@ main() {
     toJSON(): string
 }
 
-data User {
+User : Serializable {
     name: string
     email: string
-}
 
-User : Serializable {
     constructor(name: string, email: string) {
         this.name = name
         this.email = email
@@ -77,6 +75,11 @@ User : Serializable {
 
     toJSON(): string =>
         $"{\\"name\\": \\"{this.name}\\"}"
+}
+
+main() {
+    let u = User("Alice", "alice@mail.com")
+    print(u.toJSON())
 }`,
   },
   {
