@@ -1,4 +1,17 @@
 ---
+import { createHighlighter } from 'shiki';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const grammarPath = path.join(process.cwd(), 'src/grammars/liva.tmLanguage.json');
+const livaGrammar = JSON.parse(fs.readFileSync(grammarPath, 'utf-8'));
+livaGrammar.name = 'liva'; // normalize for Shiki lookup
+
+const highlighter = await createHighlighter({
+  themes: ['github-dark'],
+  langs: [livaGrammar],
+});
+
 const examples = [
   {
     title: 'Types & Operators',
@@ -227,7 +240,7 @@ main() {
               <h3 class="font-semibold text-base-content">{ex.title}</h3>
               <p class="text-base-content/40 text-sm mt-0.5">{ex.subtitle}</p>
             </div>
-            <pre class="p-5 text-[13px] leading-relaxed overflow-x-auto"><code class="font-mono text-base-content/70">{ex.code}</code></pre>
+            <div class="p-5 text-[13px] leading-relaxed overflow-x-auto [&_pre]:!bg-transparent [&_pre]:!m-0 [&_pre]:!p-0 [&_code]:!text-[13px] [&_code]:!leading-relaxed" set:html={highlighter.codeToHtml(ex.code, { lang: 'liva', theme: 'github-dark' })} />
           </div>
         </div>
       ))}
