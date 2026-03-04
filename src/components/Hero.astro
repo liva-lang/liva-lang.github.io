@@ -4,77 +4,89 @@
 <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
   <!-- Background gradient -->
   <div class="absolute inset-0 -z-10">
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-liva-500/10 blur-[120px]"></div>
-    <div class="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[100px]"></div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/10 blur-[120px]"></div>
+    <div class="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[100px]"></div>
   </div>
 
-  <div class="max-w-6xl mx-auto px-6 text-center">
-    <!-- Badge -->
-    <a
-      href="https://github.com/liva-lang/livac/releases/latest"
-      target="_blank"
-      class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-liva-500/10 border border-liva-500/20 text-liva-400 text-sm font-medium mb-8 hover:bg-liva-500/15 transition-colors"
-    >
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      v1.2.0 — Enum Types & Test Framework
-    </a>
+  <div class="max-w-6xl mx-auto px-6">
+    <!-- Top section: text left, code right -->
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Left: Text content -->
+      <div class="text-left">
+        <!-- Badge -->
+        <a
+          href="https://github.com/liva-lang/livac/releases/latest"
+          target="_blank"
+          class="badge badge-outline badge-primary gap-2 px-4 py-3 mb-8 hover:bg-primary/10 transition-colors"
+        >
+          <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+          v1.2.0 — Enum Types & Test Framework
+        </a>
 
-    <!-- Title -->
-    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
-      <span class="text-white">Write </span>
-      <span class="bg-gradient-to-r from-liva-400 to-purple-400 bg-clip-text text-transparent">clean code</span>
-      <br />
-      <span class="text-white">compile to </span>
-      <span class="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Rust</span>
-    </h1>
+        <!-- Title -->
+        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6">
+          <span class="text-base-content">Write </span>
+          <span class="bg-gradient-to-r from-liva-400 to-purple-400 bg-clip-text text-transparent">clean code</span>
+          <br />
+          <span class="text-base-content">compile to </span>
+          <span class="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Rust</span>
+        </h1>
 
-    <!-- Subtitle -->
-    <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-      Liva combines the simplicity of TypeScript with the safety and performance of Rust.
-      No garbage collector. No runtime overhead. Just clean code that runs fast.
-    </p>
+        <!-- Subtitle -->
+        <p class="text-lg text-base-content/60 max-w-lg mb-10 leading-relaxed">
+          Liva combines the simplicity of TypeScript with the safety and performance of Rust.
+          No garbage collector. No runtime overhead. Just clean code that runs fast.
+        </p>
 
-    <!-- CTA buttons -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a
-        href="#install"
-        class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-liva-500 to-liva-600 text-white font-semibold text-sm shadow-lg shadow-liva-500/25 hover:shadow-liva-500/40 hover:brightness-110 transition-all"
-      >
-        Get Started
-      </a>
-      <a
-        href="#code"
-        class="px-8 py-3.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-semibold text-sm hover:bg-white/10 hover:text-white transition-all"
-      >
-        See Examples
-      </a>
-    </div>
-
-    <!-- Hero code preview -->
-    <div class="mt-16 max-w-2xl mx-auto">
-      <div class="rounded-2xl bg-surface-light border border-white/5 shadow-2xl overflow-hidden">
-        <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5">
-          <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
-          <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-          <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
-          <span class="ml-2 text-xs text-gray-500 font-mono">hello.liva</span>
+        <!-- CTA buttons -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#install" class="btn btn-primary btn-lg shadow-lg shadow-primary/25">
+            Get Started
+          </a>
+          <a href="#code" class="btn btn-ghost btn-lg border border-base-content/10">
+            See Examples
+          </a>
         </div>
-        <pre class="p-6 text-sm leading-relaxed overflow-x-auto"><code class="font-mono"><span class="text-purple-400">main</span><span class="text-gray-400">()</span> <span class="text-gray-400">{</span>
-  <span class="text-blue-400">let</span> <span class="text-white">name</span> = <span class="text-green-400">"World"</span>
-  <span class="text-blue-400">let</span> <span class="text-white">nums</span> = <span class="text-gray-400">[</span><span class="text-amber-400">1</span>, <span class="text-amber-400">2</span>, <span class="text-amber-400">3</span>, <span class="text-amber-400">4</span>, <span class="text-amber-400">5</span><span class="text-gray-400">]</span>
-
-  <span class="text-blue-400">let</span> <span class="text-white">doubled</span> = <span class="text-white">nums</span>.<span class="text-purple-400">map</span><span class="text-gray-400">(</span><span class="text-white">x</span> <span class="text-liva-400">=></span> <span class="text-white">x</span> * <span class="text-amber-400">2</span><span class="text-gray-400">)</span>
-  <span class="text-blue-400">let</span> <span class="text-white">sum</span> = <span class="text-white">doubled</span>.<span class="text-purple-400">reduce</span><span class="text-gray-400">((</span><span class="text-white">a</span>, <span class="text-white">b</span><span class="text-gray-400">)</span> <span class="text-liva-400">=></span> <span class="text-white">a</span> + <span class="text-white">b</span>, <span class="text-amber-400">0</span><span class="text-gray-400">)</span>
-
-  <span class="text-yellow-400">print</span><span class="text-gray-400">(</span><span class="text-green-400">$"Hello, {<span class="text-white">name</span>}! Sum: {<span class="text-white">sum</span>}"</span><span class="text-gray-400">)</span>
-<span class="text-gray-400">}</span></code></pre>
       </div>
 
-      <div class="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <span>Compiles to native binary via Rust — zero runtime overhead</span>
+      <!-- Right: Code preview -->
+      <div class="mockup-code bg-base-200 shadow-2xl border border-base-content/5">
+        <div class="px-1">
+          <pre data-prefix=""><code><span class="text-base-content/40">// hello.liva</span></code></pre>
+          <pre data-prefix="1"><code><span class="text-primary font-semibold">main</span><span class="text-base-content/60">()</span> <span class="text-base-content/60">{"{"}</span></code></pre>
+          <pre data-prefix="2"><code>  <span class="text-info">let</span> <span class="text-base-content">name</span> = <span class="text-success">"World"</span></code></pre>
+          <pre data-prefix="3"><code>  <span class="text-info">let</span> <span class="text-base-content">nums</span> = <span class="text-base-content/60">[</span><span class="text-warning">1</span>, <span class="text-warning">2</span>, <span class="text-warning">3</span>, <span class="text-warning">4</span>, <span class="text-warning">5</span><span class="text-base-content/60">]</span></code></pre>
+          <pre data-prefix="4"><code></code></pre>
+          <pre data-prefix="5"><code>  <span class="text-info">let</span> <span class="text-base-content">doubled</span> = <span class="text-base-content">nums</span>.<span class="text-primary">map</span><span class="text-base-content/60">(</span><span class="text-base-content">x</span> <span class="text-liva-400">=&gt;</span> <span class="text-base-content">x</span> * <span class="text-warning">2</span><span class="text-base-content/60">)</span></code></pre>
+          <pre data-prefix="6"><code>  <span class="text-info">let</span> <span class="text-base-content">sum</span> = <span class="text-base-content">doubled</span>.<span class="text-primary">reduce</span><span class="text-base-content/60">((</span><span class="text-base-content">a</span>, <span class="text-base-content">b</span><span class="text-base-content/60">)</span> <span class="text-liva-400">=&gt;</span> <span class="text-base-content">a</span> + <span class="text-base-content">b</span>, <span class="text-warning">0</span><span class="text-base-content/60">)</span></code></pre>
+          <pre data-prefix="7"><code></code></pre>
+          <pre data-prefix="8"><code>  <span class="text-accent">print</span><span class="text-base-content/60">(</span><span class="text-success">$"Hello, {"{"}</span><span class="text-base-content">name</span><span class="text-success">{"}"}! Sum: {"{"}</span><span class="text-base-content">sum</span><span class="text-success">{"}"}"</span><span class="text-base-content/60">)</span></code></pre>
+          <pre data-prefix="9"><code><span class="text-base-content/60">{"}"}</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom: stats/highlights -->
+    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-base-200/50 rounded-box border border-base-content/5 p-5 text-center">
+        <div class="text-xs text-base-content/40 mb-1">Compiles to</div>
+        <div class="text-xl font-bold text-primary">Rust</div>
+        <div class="text-xs text-base-content/40 mt-1">Native binary</div>
+      </div>
+      <div class="bg-base-200/50 rounded-box border border-base-content/5 p-5 text-center">
+        <div class="text-xs text-base-content/40 mb-1">Runtime</div>
+        <div class="text-xl font-bold text-success">Zero</div>
+        <div class="text-xs text-base-content/40 mt-1">No GC overhead</div>
+      </div>
+      <div class="bg-base-200/50 rounded-box border border-base-content/5 p-5 text-center">
+        <div class="text-xs text-base-content/40 mb-1">Built-in</div>
+        <div class="text-xl font-bold text-warning">37+</div>
+        <div class="text-xs text-base-content/40 mt-1">Stdlib functions</div>
+      </div>
+      <div class="bg-base-200/50 rounded-box border border-base-content/5 p-5 text-center">
+        <div class="text-xs text-base-content/40 mb-1">Tests</div>
+        <div class="text-xl font-bold text-info">296</div>
+        <div class="text-xs text-base-content/40 mt-1">Passing & CI green</div>
       </div>
     </div>
   </div>

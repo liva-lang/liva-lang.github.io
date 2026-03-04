@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  themes: liva --default;
+}
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -10,4 +13,40 @@
   --color-surface: #0f172a;
   --color-surface-light: #1e293b;
   --color-surface-lighter: #334155;
+}
+
+/* DaisyUI custom "liva" theme */
+@plugin "daisyui/theme" {
+  name: "liva";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: oklch(20.77% 0.04 265.75);
+  --color-base-200: oklch(18% 0.035 265.75);
+  --color-base-300: oklch(15% 0.03 265.75);
+  --color-base-content: oklch(90% 0.01 260);
+  --color-primary: oklch(55% 0.22 277);
+  --color-primary-content: oklch(96% 0.018 272);
+  --color-secondary: oklch(65% 0.17 300);
+  --color-secondary-content: oklch(94% 0.028 300);
+  --color-accent: oklch(77% 0.152 182);
+  --color-accent-content: oklch(38% 0.063 188);
+  --color-neutral: oklch(14% 0.005 286);
+  --color-neutral-content: oklch(92% 0.004 286);
+  --color-info: oklch(74% 0.16 233);
+  --color-info-content: oklch(29% 0.066 243);
+  --color-success: oklch(76% 0.177 163);
+  --color-success-content: oklch(37% 0.077 169);
+  --color-warning: oklch(82% 0.189 84);
+  --color-warning-content: oklch(41% 0.112 46);
+  --color-error: oklch(71% 0.194 13);
+  --color-error-content: oklch(27% 0.105 12);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }

@@ -36,43 +36,42 @@ const tabs = [
 ];
 ---
 
-<section id="install" class="py-24 md:py-32 bg-surface-light/30">
+<section id="install" class="py-24 md:py-32 bg-base-200/30">
   <div class="max-w-4xl mx-auto px-6">
     <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
         Get started in seconds
       </h2>
-      <p class="text-gray-400 text-lg">
+      <p class="text-base-content/60 text-lg">
         Pre-built binaries for Linux, macOS, and Windows. Or build from source.
       </p>
     </div>
 
-    <!-- Simple tab display -->
+    <!-- Install methods -->
     {tabs.map((tab) => (
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-3">
           <span class="text-lg">{tab.icon}</span>
-          <h3 class="text-white font-semibold">{tab.label}</h3>
+          <h3 class="text-base-content font-semibold">{tab.label}</h3>
         </div>
-        <div class="rounded-xl bg-surface border border-white/5 overflow-hidden">
-          <pre class="p-5 text-sm leading-relaxed overflow-x-auto"><code class="font-mono text-gray-300">{tab.commands.map(cmd =>
+        <div class="mockup-code bg-base-200 border border-base-content/5">
+          {tab.commands.map(cmd =>
             cmd.startsWith('#')
-              ? <span class="text-gray-500">{cmd + '\n'}</span>
-              : <><span class="text-liva-400 select-none">$ </span>{cmd + '\n'}</>
-          )}</code></pre>
+              ? <pre data-prefix=""><code class="text-base-content/40">{cmd}</code></pre>
+              : <pre data-prefix="$"><code>{cmd}</code></pre>
+          )}
         </div>
       </div>
     ))}
 
     <!-- Quick start after install -->
     <div class="mt-12 text-center">
-      <p class="text-gray-400 mb-4">Then write your first program:</p>
-      <div class="max-w-md mx-auto rounded-xl bg-surface border border-white/5 overflow-hidden">
-        <pre class="p-5 text-sm leading-relaxed overflow-x-auto text-left"><code class="font-mono"><span class="text-gray-500"># hello.liva</span>
-<span class="text-gray-300">main() => print("Hello, Liva!")</span>
-
-<span class="text-liva-400 select-none">$ </span><span class="text-gray-300">livac hello.liva --run</span>
-<span class="text-emerald-400">Hello, Liva!</span></code></pre>
+      <p class="text-base-content/60 mb-4">Then write your first program:</p>
+      <div class="max-w-md mx-auto mockup-code bg-base-200 border border-base-content/5">
+        <pre data-prefix=""><code class="text-base-content/40"># hello.liva</code></pre>
+        <pre data-prefix=" "><code>main() =&gt; print("Hello, Liva!")</code></pre>
+        <pre data-prefix="$"><code>livac hello.liva --run</code></pre>
+        <pre data-prefix="" class="text-success"><code>Hello, Liva!</code></pre>
       </div>
     </div>
 
@@ -81,14 +80,14 @@ const tabs = [
       <a
         href="https://github.com/liva-lang/livac/releases/latest"
         target="_blank"
-        class="px-6 py-3 rounded-xl bg-gradient-to-r from-liva-500 to-liva-600 text-white font-semibold text-sm shadow-lg shadow-liva-500/25 hover:shadow-liva-500/40 hover:brightness-110 transition-all"
+        class="btn btn-primary shadow-lg shadow-primary/25"
       >
         Download Latest Release
       </a>
       <a
         href="https://github.com/liva-lang/livac/blob/main/docs/QUICK_REFERENCE.md"
         target="_blank"
-        class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-semibold text-sm hover:bg-white/10 hover:text-white transition-all"
+        class="btn btn-ghost border border-base-content/10"
       >
         Read the Docs
       </a>

@@ -102,6 +102,47 @@ main() {
 }`,
   },
   {
+    title: 'Test Framework',
+    subtitle: 'Jest-like API with describe/test/expect',
+    code: `add(a: number, b: number): number => a + b
+
+describe("Math operations") {
+    test("addition works") {
+        expect(add(2, 3)).toBe(5)
+        expect(add(-1, 1)).toBe(0)
+    }
+
+    test("handles large numbers") {
+        expect(add(1000000, 1)).toBe(1000001)
+    }
+}
+
+// Run: livac math_test.liva --test`,
+  },
+  {
+    title: 'Enum Types',
+    subtitle: 'Algebraic data types with exhaustive matching',
+    code: `enum Result {
+    Ok(value: string),
+    Err(message: string)
+}
+
+parseConfig(raw: string): Result {
+    if raw.length() == 0 {
+        return Result.Err("Empty config")
+    }
+    return Result.Ok(raw)
+}
+
+main() {
+    let r = parseConfig("")
+    switch r {
+        Result.Ok(v) => print($"Config: {v}"),
+        Result.Err(e) => print($"Error: {e}")
+    }
+}`,
+  },
+  {
     title: 'File I/O & HTTP',
     subtitle: 'Built-in stdlib for real-world apps',
     code: `main() {
@@ -125,25 +166,27 @@ main() {
 ];
 ---
 
-<section id="code" class="py-24 md:py-32 bg-surface-light/30">
+<section id="code" class="py-24 md:py-32 bg-base-200/30">
   <div class="max-w-6xl mx-auto px-6">
     <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
         Code that speaks for itself
       </h2>
-      <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+      <p class="text-base-content/60 text-lg max-w-2xl mx-auto">
         Real Liva code — not pseudo-code. Every example here compiles and runs.
       </p>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
       {examples.map((ex) => (
-        <div class="rounded-2xl bg-surface border border-white/5 overflow-hidden hover:border-liva-500/15 transition-colors">
-          <div class="px-5 py-4 border-b border-white/5">
-            <h3 class="text-white font-semibold">{ex.title}</h3>
-            <p class="text-gray-500 text-sm mt-0.5">{ex.subtitle}</p>
+        <div class="card bg-base-100 border border-base-content/5 hover:border-primary/15 transition-colors">
+          <div class="card-body p-0">
+            <div class="px-5 py-4 border-b border-base-content/5">
+              <h3 class="font-semibold text-base-content">{ex.title}</h3>
+              <p class="text-base-content/40 text-sm mt-0.5">{ex.subtitle}</p>
+            </div>
+            <pre class="p-5 text-[13px] leading-relaxed overflow-x-auto"><code class="font-mono text-base-content/70">{ex.code}</code></pre>
           </div>
-          <pre class="p-5 text-[13px] leading-relaxed overflow-x-auto"><code class="font-mono text-gray-300">{ex.code}</code></pre>
         </div>
       ))}
     </div>
