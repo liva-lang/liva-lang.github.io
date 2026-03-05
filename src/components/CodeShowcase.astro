@@ -22,7 +22,6 @@ const examples = [
     let age: number = 25         // i32
     let height: float = 1.75     // f64
     let active: bool = true
-    let initial: char = 'A'
 
     // Rust integer & float types
     let big: i64 = 9999999999
@@ -31,24 +30,23 @@ const examples = [
     let idx: usize = 100
 
     // Collections & optional
-    let scores = [95, 87, 92]    // [number]
-    let maybe: number? = null    // optional
+    let scores = [95, 87, 92]
+    let maybe: number? = null
 
     // or <value> — default when call fails
-    let port = parsePort("abc") or 3000   // 3000
+    let port = parsePort("abc") or 3000
     let cfg = File.read("app.json") or "{}"
 
     // Operators & ternary
     let status = age >= 18 ? "Adult" : "Minor"
     let canVote = age >= 18 and active
-    let total = scores.reduce(0, (a, b) => a + b)
 
-    print($"{name}: {status}, score={total}")
+    print($"{name}: {status}, port={port}")
 }`,
   },
   {
     title: 'Functions & One-liners',
-    subtitle: 'Arrow syntax, defaults, references, tuples',
+    subtitle: 'Arrow syntax, defaults, tuples, point-free',
     code: `// Arrow functions (one-liners)
 square(x: number): number => x * x
 greet(name: string = "World") => $"Hello, {name}!"
@@ -77,15 +75,14 @@ main() {
     let doubled = nums.map(x => x * 2)
 
     let p = getPoint()
-    print($"x={p.0}, y={p.1}")
-    print($"clamped: {clamp(150, 0, 100)}")
+    print($"x={p.0}, y={p.1}, clamped={clamp(150, 0, 100)}")
 }`,
   },
   {
     title: 'Loops & Control Flow',
     subtitle: 'for, while, ranges, break/continue, one-liner =>',
     code: `main() {
-    // Range loops
+    // Range loops (inclusive)
     for i in 1..=5 => print(i)     // 1,2,3,4,5
 
     // Array iteration
@@ -105,6 +102,14 @@ main() {
 
     // One-liner if
     if names.length > 0 => print("Not empty!")
+
+    // Switch statement
+    let role = "admin"
+    switch role {
+        case "admin": print("Full access")
+        case "user": print("Limited access")
+        default: print("Unknown role")
+    }
 }`,
   },
   {
@@ -124,6 +129,11 @@ main() {
         this._balance = this._balance + amount
     }
 
+    withdraw(amount: number) {
+        if amount > this._balance => fail "Insufficient funds"
+        this._balance = this._balance - amount
+    }
+
     getBalance(): number => this._balance
     _log(msg: string) => print($"[LOG] {msg}")
 }
@@ -131,7 +141,8 @@ main() {
 main() {
     let acc = Account("Alice", 1000)
     acc.deposit(500)
-    print($"{acc.owner}: {acc.getBalance()}")
+    acc.withdraw(200)
+    print($"{acc.owner}: {acc.getBalance()}")  // 1300
 }`,
   },
   {
@@ -152,12 +163,19 @@ area(s: Shape): number => switch s {
 describe(s: Shape): string => switch s {
     Shape.Circle(r) if r > 100 => "Huge circle",
     Shape.Circle(r) => $"Circle r={r}",
-    _ => "Other shape"
+    Shape.Rectangle(w, h) => $"{w}x{h} rect",
+    _ => "Just a point"
 }
 
 main() {
-    let shapes = [Shape.Circle(5), Shape.Rectangle(3, 4)]
-    for s in shapes => print($"Area: {area(s)}")
+    let shapes = [
+        Shape.Circle(5),
+        Shape.Rectangle(3, 4),
+        Shape.Point
+    ]
+    for s in shapes {
+        print($"{describe(s)}, area={area(s)}")
+    }
 }`,
   },
   {
@@ -170,28 +188,39 @@ main() {
     return port
 }
 
+loadConfig(path: string): string {
+    let content = File.read(path) or fail "File not found"
+    let config = JSON.parse(content) or fail "Invalid JSON"
+    return config
+}
+
 main() {
     // Error binding — capture value + error
     let port, err = parsePort("8080")
     if err => print($"Error: {err}")
 
-    // or fail — propagate on error
-    let cfg = File.read("config.json") or fail "No config"
-    let data = JSON.parse(cfg) or fail "Invalid JSON"
+    // or fail — propagate errors up
+    let cfg = loadConfig("config.json")
 
-    // or <value> — default when call fails (like JS ||)
+    // or <value> — default when call fails
     let port2 = parsePort("abc") or 3000   // 3000
     let port3 = parsePort("443") or 3000   // 443
+
+    // Chain fallible calls
+    let data = File.read("data.csv") or fail "No data"
+    let lines = data.split("\\n")
+    print($"Loaded {lines.length} lines on port {port}")
 }`,
   },
   {
     title: 'Functional Collections',
-    subtitle: 'map, filter, reduce — chainable and familiar',
+    subtitle: 'map, filter, reduce, destructuring, join',
     code: `isEven(x: number): bool => x % 2 == 0
 
 main() {
     let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+    // Chained operations with point-free refs
     let result = nums
         .filter(isEven)              // point-free ref
         .map(x => x * x)            // lambda
@@ -199,13 +228,19 @@ main() {
 
     print($"Sum of even squares: {result}")  // 220
 
-    // Destructuring
+    // Array destructuring
     let [first, , third] = ["a", "b", "c"]
     let [head, ...tail] = nums
-    print($"head={head}, tail has {tail.length} items")
 
     // String join
-    let csv = ["Alice", "Bob", "Charlie"].join(", ")
+    let names = ["Alice", "Bob", "Charlie"]
+    let csv = names.join(", ")
+
+    // forEach with point-free
+    names.forEach(print)
+
+    print($"head={head}, tail={tail.length} items")
+    print($"csv: {csv}")
 }`,
   },
   {
@@ -220,8 +255,9 @@ main() {
 }
 
 main() {
-    // Async I/O — auto-awaited on use
-    let user = async fetchUser(1)
+    // Async I/O — error binding with async
+    let user, err = async fetchUser(1)
+    if err => print($"Failed: {err}")
 
     // Parallel CPU work (separate thread)
     let result = par heavyCalculation(1000)
@@ -231,19 +267,17 @@ main() {
 
     // Task handle — explicit control
     let t = task async fetchUser(2)
-    let user2 = await t
+    let user2, err2 = await t
+    if err2 => print($"Task failed: {err2}")
 
     // Parallel collections — .par() adapter
     let nums = [1, 2, 3, 4, 5]
     let doubled = nums.par().map(x => x * 2)
 
     // Data-parallel for loop with policies
-    let items = ["a", "b", "c", "d"]
     for par item in items with chunk 2 threads 4 {
         process(item)
     }
-
-    print($"Got: {user}, doubled: {doubled}")
 }`,
   },
   {
@@ -269,7 +303,9 @@ User : Printable, Serializable {
     }
 
     format(): string => $"{this.name} <{this.email}>"
-    toJSON(): string => $"{\\"name\\": \\"{this.name}\\"}"
+    toJSON(): string {
+        return $"{\\"name\\": \\"{this.name}\\"}"
+    }
 }
 
 main() {
@@ -299,6 +335,12 @@ describe("Math utils") {
     test("parseAge rejects invalid input") {
         let age, err = parseAge("abc")
         expect(err).toBeTruthy()
+    }
+
+    test("parseAge accepts valid input") {
+        let age, err = parseAge("25")
+        expect(err).toBeFalsy()
+        expect(age).toBe(25)
     }
 }`,
   },
