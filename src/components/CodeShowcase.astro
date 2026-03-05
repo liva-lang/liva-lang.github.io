@@ -140,8 +140,8 @@ main() {
 
 main() {
     let acc = Account("Alice", 1000)
-    acc.deposit(500)
-    acc.withdraw(200)
+    acc.deposit(500) or fail
+    acc.withdraw(200) or fail
     print($"{acc.owner}: {acc.getBalance()}")  // 1300
 }`,
   },
@@ -200,7 +200,7 @@ main() {
     if err => print($"Error: {err}")
 
     // or fail — propagate errors up
-    let cfg = loadConfig("config.json")
+    let cfg = loadConfig("config.json") or fail
 
     // or <value> — default when call fails
     let port2 = parsePort("abc") or 3000   // 3000
