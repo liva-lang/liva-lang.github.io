@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://liva-lang.github.io/sitemap.xml

@@ -2,7 +2,7 @@
 const tabs = [
   {
     id: 'debian',
-    label: 'Ubuntu / Debian',
+    label: 'Linux',
     icon: '🐧',
     commands: [
       'curl -LO https://github.com/liva-lang/livac/releases/latest/download/livac_amd64.deb',
@@ -22,13 +22,24 @@ const tabs = [
     ],
   },
   {
+    id: 'windows',
+    label: 'Windows',
+    icon: '🪟',
+    commands: [
+      '# Download the .zip from GitHub Releases',
+      'Invoke-WebRequest -Uri https://github.com/liva-lang/livac/releases/latest/download/livac-windows-x86_64.zip -OutFile livac.zip',
+      'Expand-Archive livac.zip -DestinationPath C:\\livac',
+      '# Add C:\\livac to your PATH',
+      'livac --version',
+    ],
+  },
+  {
     id: 'source',
-    label: 'From Source',
+    label: 'Source',
     icon: '🔧',
     commands: [
       'git clone https://github.com/liva-lang/livac.git',
-      'cd livac',
-      'cargo build --release',
+      'cd livac && cargo build --release',
       'cargo install --path .',
       'livac --version',
     ],
@@ -47,13 +58,31 @@ const tabs = [
       </p>
     </div>
 
-    <!-- Install methods -->
-    {tabs.map((tab) => (
-      <div class="mb-6">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="text-lg">{tab.icon}</span>
-          <h3 class="text-base-content font-semibold">{tab.label}</h3>
-        </div>
+    <!-- Tab buttons -->
+    <div class="flex justify-center mb-6">
+      <div role="tablist" class="tabs tabs-box bg-base-200 border border-base-content/5">
+        {tabs.map((tab, i) => (
+          <button
+            role="tab"
+            class={`tab gap-2 ${i === 0 ? 'tab-active' : ''}`}
+            data-tab={tab.id}
+            onclick={`
+              document.querySelectorAll('[role=tabpanel]').forEach(p => p.classList.add('hidden'));
+              document.getElementById('panel-${tab.id}').classList.remove('hidden');
+              this.closest('[role=tablist]').querySelectorAll('[role=tab]').forEach(t => t.classList.remove('tab-active'));
+              this.classList.add('tab-active');
+            `}
+          >
+            <span>{tab.icon}</span>
+            <span class="hidden sm:inline">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Tab panels -->
+    {tabs.map((tab, i) => (
+      <div role="tabpanel" id={`panel-${tab.id}`} class={i !== 0 ? 'hidden' : ''}>
         <div class="mockup-code bg-base-200 border border-base-content/5">
           {tab.commands.map(cmd =>
             cmd.startsWith('#')
