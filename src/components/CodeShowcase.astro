@@ -210,7 +210,7 @@ main() {
   },
   {
     title: 'Concurrency',
-    subtitle: 'async for I/O, par for CPU — no colored functions',
+    subtitle: 'async, par, task/await, parallel policies',
     code: `fetchUser(id: number): string {
     let resp, err = HTTP.get(
         $"https://api.example.com/users/{id}"
@@ -219,8 +219,10 @@ main() {
     return resp.body
 }
 
+process(item: string) => print($"Done: {item}")
+
 main() {
-    // Async I/O — auto-inferred, no keywords needed
+    // Async I/O — auto-awaited on use
     let user = async fetchUser(1)
 
     // Parallel CPU work (separate thread)
@@ -233,7 +235,17 @@ main() {
     let t = task async fetchUser(2)
     let user2 = await t
 
-    print($"Got: {user}")
+    // Parallel collection policies
+    let items = ["a", "b", "c", "d"]
+    for par item in items => process(item)      // parallel
+    for par(threads: 4) item in items {         // 4 threads
+        process(item)
+    }
+
+    let nums = [1, 2, 3, 4, 5]
+    let doubled = nums.map(par x => x * 2)     // parallel map
+
+    print($"Got: {user}, doubled: {doubled}")
 }`,
   },
   {
