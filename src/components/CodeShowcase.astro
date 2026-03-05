@@ -104,7 +104,7 @@ main() {
     }
 
     // One-liner if
-    if names.length() > 0 => print("Not empty!")
+    if names.length > 0 => print("Not empty!")
 }`,
   },
   {
@@ -202,7 +202,7 @@ main() {
     // Destructuring
     let [first, , third] = ["a", "b", "c"]
     let [head, ...tail] = nums
-    print($"head={head}, tail has {tail.length()} items")
+    print($"head={head}, tail has {tail.length} items")
 
     // String join
     let csv = ["Alice", "Bob", "Charlie"].join(", ")
