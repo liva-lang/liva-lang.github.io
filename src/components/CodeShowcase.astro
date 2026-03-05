@@ -140,7 +140,7 @@ main() {
   },
   {
     title: 'Error Handling',
-    subtitle: 'fail, error binding, or fail / or default',
+    subtitle: 'fail, error binding, or fail',
     code: `parsePort(input: string): number {
     let port, err = Number.parse(input)
     if err { fail $"Invalid port: {input}" }
@@ -151,7 +151,7 @@ main() {
 }
 
 main() {
-    // Error binding
+    // Error binding — capture value + error
     let port, err = parsePort("8080")
     if err {
         print($"Error: {err}")
@@ -159,10 +159,9 @@ main() {
         print($"Port: {port}")
     }
 
-    // or fail — propagate errors
+    // or fail — propagate on error
     let cfg = File.read("config.json") or fail "No config"
-    // or default — fallback value
-    let p = parsePort("abc") or default 3000
+    let data = JSON.parse(cfg) or fail "Invalid JSON"
 }`,
   },
   {
@@ -192,9 +191,8 @@ main() {
   {
     title: 'Concurrency',
     subtitle: 'async for I/O, par for CPU — no colored functions',
-    code: `// No async keyword in declaration — auto-inferred
-fetchUser(id: number): string {
-    let resp, err = async HTTP.get(
+    code: `fetchUser(id: number): string {
+    let resp, err = HTTP.get(
         $"https://api.example.com/users/{id}"
     )
     if err { fail err }
@@ -202,16 +200,16 @@ fetchUser(id: number): string {
 }
 
 main() {
-    // Async I/O
+    // Async I/O — auto-inferred, no keywords needed
     let user = async fetchUser(1)
 
-    // Parallel CPU work
+    // Parallel CPU work (separate thread)
     let result = par heavyCalculation(1000)
 
     // Fire and forget
     fire async logEvent("started")
 
-    // Task handle
+    // Task handle — explicit control
     let t = task async fetchUser(2)
     let user2 = await t
 
