@@ -42,8 +42,8 @@ greet(name: string = "World") => $"Hello, {name}!"
 
 // Block function
 clamp(val: number, lo: number, hi: number): number {
-    if val < lo { return lo }
-    if val > hi { return hi }
+    if val < lo => return lo
+    if val > hi => return hi
     return val
 }
 
@@ -98,7 +98,7 @@ main() {
     }
 
     deposit(amount: number) {
-        if amount <= 0 { fail "Invalid amount" }
+        if amount <= 0 => fail "Invalid amount"
         this._balance = this._balance + amount
     }
 
@@ -143,21 +143,15 @@ main() {
     subtitle: 'fail, error binding, or fail',
     code: `parsePort(input: string): number {
     let port, err = Number.parse(input)
-    if err { fail $"Invalid port: {input}" }
-    if port < 1 or port > 65535 {
-        fail "Port out of range"
-    }
+    if err => fail $"Invalid port: {input}"
+    if port < 1 or port > 65535 => fail "Port out of range"
     return port
 }
 
 main() {
     // Error binding — capture value + error
     let port, err = parsePort("8080")
-    if err {
-        print($"Error: {err}")
-    } else {
-        print($"Port: {port}")
-    }
+    if err => print($"Error: {err}")
 
     // or fail — propagate on error
     let cfg = File.read("config.json") or fail "No config"
@@ -195,7 +189,7 @@ main() {
     let resp, err = HTTP.get(
         $"https://api.example.com/users/{id}"
     )
-    if err { fail err }
+    if err => fail err
     return resp.body
 }
 
