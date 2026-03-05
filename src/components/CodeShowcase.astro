@@ -226,8 +226,8 @@ main() {
     // Parallel CPU work (separate thread)
     let result = par heavyCalculation(1000)
 
-    // Fire and forget
-    fire async logEvent("started")
+    // Fire and forget (auto-inferred)
+    async logEvent("started")
 
     // Task handle — explicit control
     let t = task async fetchUser(2)
