@@ -15,13 +15,14 @@ const highlighter = await createHighlighter({
 const examples = [
   {
     title: 'Types & Operators',
-    subtitle: 'Primitives, Rust types, inference, ternary',
+    subtitle: 'Primitives, Rust types, defaults, or <value>',
     code: `main() {
     // Liva primitives (inferred or explicit)
     let name: string = "Alice"
     let age: number = 25         // i32
     let height: float = 1.75     // f64
     let active: bool = true
+    let initial: char = 'A'
 
     // Rust integer & float types
     let big: i64 = 9999999999
@@ -33,11 +34,16 @@ const examples = [
     let scores = [95, 87, 92]    // [number]
     let maybe: number? = null    // optional
 
+    // or <value> — default when call fails
+    let port = parsePort("abc") or 3000   // 3000
+    let cfg = File.read("app.json") or "{}"
+
     // Operators & ternary
     let status = age >= 18 ? "Adult" : "Minor"
     let canVote = age >= 18 and active
+    let total = scores.reduce(0, (a, b) => a + b)
 
-    print($"{name}: {status}, height={height}")
+    print($"{name}: {status}, score={total}")
 }`,
   },
   {
@@ -228,6 +234,38 @@ main() {
     let user2 = await t
 
     print($"Got: {user}")
+}`,
+  },
+  {
+    title: 'Interfaces & Polymorphism',
+    subtitle: 'Contracts, multiple interfaces, : syntax',
+    code: `// Interface — only method signatures
+Printable {
+    format(): string
+}
+
+Serializable {
+    toJSON(): string
+}
+
+// Class implementing multiple interfaces
+User : Printable, Serializable {
+    name: string
+    email: string
+
+    constructor(name: string, email: string) {
+        this.name = name
+        this.email = email
+    }
+
+    format(): string => $"{this.name} <{this.email}>"
+    toJSON(): string => $"{\\"name\\": \\"{this.name}\\"}"
+}
+
+main() {
+    let user = User("Alice", "alice@dev.io")
+    print(user.format())    // Alice <alice@dev.io>
+    print(user.toJSON())    // {"name": "Alice"}
 }`,
   },
   {
