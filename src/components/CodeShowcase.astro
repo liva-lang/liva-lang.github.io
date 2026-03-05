@@ -15,20 +15,42 @@ const highlighter = await createHighlighter({
 const examples = [
   {
     title: 'Types & Operators',
-    subtitle: 'Type inference, Rust numeric types, ranges, ternary',
-    code: `const MAX_RETRIES = 3
-
-main() {
-    let name = "Alice"           // string (inferred)
-    let age: number = 25         // explicit i32
+    subtitle: 'Primitives, Rust types, inference, ternary',
+    code: `main() {
+    // Liva primitives (inferred or explicit)
+    let name: string = "Alice"
+    let age: number = 25         // i32
     let height: float = 1.75     // f64
-    let active = true            // bool
+    let active: bool = true
+    let initial: char = 'A'
+
+    // Rust integer types — signed
+    let a: i8 = 127
+    let b: i16 = 32000
+    let c: i32 = 2000000
+    let d: i64 = 9999999999
+    let e: i128 = 99999999999999
+
+    // Rust integer types — unsigned
+    let f: u8 = 255
+    let g: u16 = 65000
+    let h: u32 = 4000000000
+    let i: u64 = 10000000000
+    let j: u128 = 99999999999999
+
+    // Rust float & size types
+    let precise: f32 = 3.14
+    let pi: f64 = 3.14159265
+    let idx: usize = 100
+    let offset: isize = -42
+
+    // Collections & optional
     let scores = [95, 87, 92]    // [number]
     let maybe: number? = null    // optional
 
+    // Operators
     let status = age >= 18 ? "Adult" : "Minor"
     let canVote = age >= 18 and active
-    let isOdd = age % 2 != 0
 
     print($"{name}: {status}, height={height}")
 }`,
@@ -140,7 +162,7 @@ main() {
   },
   {
     title: 'Error Handling',
-    subtitle: 'fail, error binding, or fail',
+    subtitle: 'fail, error binding, or fail, or <default>',
     code: `parsePort(input: string): number {
     let port, err = Number.parse(input)
     if err => fail $"Invalid port: {input}"
@@ -156,6 +178,10 @@ main() {
     // or fail — propagate on error
     let cfg = File.read("config.json") or fail "No config"
     let data = JSON.parse(cfg) or fail "Invalid JSON"
+
+    // or <value> — default when call fails (like JS ||)
+    let port2 = parsePort("abc") or 3000   // 3000
+    let port3 = parsePort("443") or 3000   // 443
 }`,
   },
   {
@@ -169,7 +195,7 @@ main() {
     let result = nums
         .filter(isEven)              // point-free ref
         .map(x => x * x)            // lambda
-        .reduce((a, b) => a + b, 0)
+        .reduce(0, (a, b) => a + b)
 
     print($"Sum of even squares: {result}")  // 220
 
