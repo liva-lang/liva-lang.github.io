@@ -344,6 +344,101 @@ describe("Math utils") {
     }
 }`,
   },
+  {
+    title: 'Maps, Sets & Collections',
+    subtitle: 'Key-value maps, sets with operators, iteration',
+    code: `main() {
+    // Map — key-value collection
+    let ages = Map { "Alice": 30, "Bob": 25, "Carol": 28 }
+    let age = ages.get("Alice") or 0
+    ages.set("Dave", 35)
+    ages.delete("Bob")
+
+    for key, value in ages {
+        print($"{key} is {value} years old")
+    }
+
+    // Set — unique values, set operations
+    let frontend = Set { "React", "Vue", "Svelte" }
+    let backend = Set { "Rust", "Go", "Node" }
+    let all = frontend.union(backend)
+
+    frontend.add("Angular")
+    print($"Frontend has {frontend.size()} frameworks")
+    print($"Has React? {frontend.has("React")}")
+
+    // Array → Map aggregation
+    let words = ["hello", "world", "hello", "liva"]
+    let counts = Map {}
+    for w in words {
+        let c = counts.get(w) or 0
+        counts.set(w, c + 1)
+    }
+    print(counts.keys())   // ["hello", "world", "liva"]
+}`,
+  },
+  {
+    title: 'Rust Interop',
+    subtitle: 'Inline Rust blocks, crate dependencies',
+    code: `// Crate dependencies (top-level)
+use rust "chrono" version "0.4"
+use rust "uuid" version "1.0" features ["v4"]
+
+main() {
+    // Inline Rust — access Liva vars by snake_case name
+    let name = "Alice"
+
+    let greeting = rust {
+        // Liva's 'name' is accessible as 'name' (String)
+        format!("Hello from Rust, {}!", name)
+    }
+    print(greeting)
+
+    // Use external crates inside rust blocks
+    let timestamp = rust {
+        use chrono::Utc;
+        Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()
+    }
+    print($"Current time: {timestamp}")
+
+    let id = rust {
+        use uuid::Uuid;
+        Uuid::new_v4().to_string()
+    }
+    print($"Generated UUID: {id}")
+}`,
+  },
+  {
+    title: 'Logging & Config',
+    subtitle: 'Structured logging, .env config loading',
+    code: `main() {
+    // Logging — timestamped, to stderr
+    Log.info("Application started")
+    Log.warn("Cache miss", "retrying")
+    Log.error("Connection failed", "timeout=30s")
+    Log.debug("Verbose detail")  // only with --verbose
+
+    // Log level control
+    Log.setLevel("debug")
+
+    // Config — load .env files with typed getters
+    Config.load(".env")
+    let dbHost = Config.get("DB_HOST") or "localhost"
+    let dbPort = Config.getInt("DB_PORT") or 5432
+    let debug = Config.getBool("DEBUG") or false
+
+    print($"Connecting to {dbHost}:{dbPort}")
+    if debug => Log.debug("Debug mode enabled")
+
+    // Log renders Maps as tables automatically
+    let stats = Map {
+        "requests": "1024",
+        "errors": "3",
+        "uptime": "99.7%"
+    }
+    Log.info("Server stats", stats)
+}`,
+  },
 ];
 ---
 

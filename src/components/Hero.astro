@@ -20,7 +20,7 @@
           class="badge badge-outline badge-primary gap-2 px-4 py-3 mb-8 hover:bg-primary/10 transition-colors"
         >
           <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
-          v1.3.0 — Error Tracing & Auto Fire-and-Forget
+          v1.5.0 — Rust Interop, Logging & Config
         </a>
 
         <!-- Title -->
@@ -58,7 +58,7 @@
           <pre data-prefix="3"><code>  <span class="text-info">let</span> <span class="text-base-content">nums</span> = <span class="text-base-content/60">[</span><span class="text-warning">1</span>, <span class="text-warning">2</span>, <span class="text-warning">3</span>, <span class="text-warning">4</span>, <span class="text-warning">5</span><span class="text-base-content/60">]</span></code></pre>
           <pre data-prefix="4"><code></code></pre>
           <pre data-prefix="5"><code>  <span class="text-info">let</span> <span class="text-base-content">doubled</span> = <span class="text-base-content">nums</span>.<span class="text-primary">map</span><span class="text-base-content/60">(</span><span class="text-base-content">x</span> <span class="text-liva-400">=&gt;</span> <span class="text-base-content">x</span> * <span class="text-warning">2</span><span class="text-base-content/60">)</span></code></pre>
-          <pre data-prefix="6"><code>  <span class="text-info">let</span> <span class="text-base-content">sum</span> = <span class="text-base-content">doubled</span>.<span class="text-primary">reduce</span><span class="text-base-content/60">((</span><span class="text-base-content">a</span>, <span class="text-base-content">b</span><span class="text-base-content/60">)</span> <span class="text-liva-400">=&gt;</span> <span class="text-base-content">a</span> + <span class="text-base-content">b</span>, <span class="text-warning">0</span><span class="text-base-content/60">)</span></code></pre>
+          <pre data-prefix="6"><code>  <span class="text-info">let</span> <span class="text-base-content">sum</span> = <span class="text-base-content">doubled</span>.<span class="text-primary">reduce</span><span class="text-base-content/60">(</span><span class="text-warning">0</span>, <span class="text-base-content/60">(</span><span class="text-base-content">a</span>, <span class="text-base-content">b</span><span class="text-base-content/60">)</span> <span class="text-liva-400">=&gt;</span> <span class="text-base-content">a</span> + <span class="text-base-content">b</span><span class="text-base-content/60">)</span></code></pre>
           <pre data-prefix="7"><code></code></pre>
           <pre data-prefix="8"><code>  <span class="text-accent">print</span><span class="text-base-content/60">(</span><span class="text-success">$"Hello, {"{"}</span><span class="text-base-content">name</span><span class="text-success">{"}"}! Sum: {"{"}</span><span class="text-base-content">sum</span><span class="text-success">{"}"}"</span><span class="text-base-content/60">)</span></code></pre>
           <pre data-prefix="9"><code><span class="text-base-content/60">{"}"}</span></code></pre>
