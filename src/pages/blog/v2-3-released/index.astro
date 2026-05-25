@@ -1,0 +1,70 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+---
+
+<Layout title="Liva 2.3 — Tooling completion · Blog" description="REPL, doc generator, bench runner, coverage, Jest hooks. Notes from the v2.3 release.">
+  <Nav />
+
+  <main class="min-h-screen pt-32 pb-24">
+    <article class="max-w-3xl mx-auto px-6 prose-liva">
+      <p class="section-num text-[color:var(--color-ink-3)] mb-4">
+        <a href="/blog" class="hover:text-[color:var(--color-accent)] transition-colors">← blog</a>
+      </p>
+
+      <div class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)] mb-3 uppercase tracking-wider">
+        2026-05-21 · release · tooling
+      </div>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight leading-[1.05] mb-6">
+        Liva 2.3 — Tooling completion
+      </h1>
+      <p class="text-[color:var(--color-ink-2)] text-[17px] leading-relaxed mb-10">
+        The compiler grew up two releases ago. v2.3 closes the gap on the
+        tooling so the day-to-day experience matches.
+      </p>
+
+      <h2 class="font-display text-2xl tracking-tight mt-12 mb-4">What shipped</h2>
+      <ul class="space-y-3 text-[15px] text-[color:var(--color-ink-2)]">
+        <li><code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac repl</code> — interactive read-eval-print loop, history-aware (rustyline).</li>
+        <li><code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac doc</code> — Markdown reference generated from <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">///</code> doc-comments.</li>
+        <li><code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac bench</code> — one <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">BENCH … ms</code> line per <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">bench_*</code> function; CI bench gate available.</li>
+        <li><code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac test --coverage</code> — wired into <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">cargo-llvm-cov</code>, emits LCOV ready for Codecov.</li>
+        <li>Jest-style <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">beforeEach</code> / <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">afterEach</code> hooks.</li>
+        <li>Lazy iterator chain fusion (<code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">.map().filter().reduce()</code> collapses into a single loop).</li>
+        <li><code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">LIVA_STRICT=1</code> env var to fail on any warning.</li>
+      </ul>
+
+      <h2 class="font-display text-2xl tracking-tight mt-12 mb-4">Why a REPL took us until 2.3</h2>
+      <p class="text-[15px] text-[color:var(--color-ink-2)] leading-relaxed mb-4">
+        Because we cheated. The REPL doesn’t interpret Liva — every line gets
+        wrapped into a synthetic <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">main()</code>,
+        codegened to Rust, and run via <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">cargo run</code>.
+        It works because incremental Rust builds are fast and we cache the
+        previous Rust crate as a "session". Felt wrong, ships great.
+      </p>
+
+      <h2 class="font-display text-2xl tracking-tight mt-12 mb-4">CI</h2>
+      <p class="text-[15px] text-[color:var(--color-ink-2)] leading-relaxed mb-4">
+        We committed a seed binary at
+        <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">bootstrap/seed/livac-linux-amd64</code>
+        to bypass intermittent BS-FRAG bugs during bootstrap. CI is fully
+        green again. Tag <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">v2.3.0</code>
+        pushed, installers building cross-platform.
+      </p>
+
+      <hr class="hairline my-12" />
+
+      <div class="flex items-center justify-between font-mono-tight text-[13px]">
+        <a href="/changelog" class="text-[color:var(--color-ink-2)] hover:text-[color:var(--color-accent)] transition-colors">
+          ← full changelog
+        </a>
+        <a href="/install" class="text-[color:var(--color-accent)] link-anim">
+          install →
+        </a>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

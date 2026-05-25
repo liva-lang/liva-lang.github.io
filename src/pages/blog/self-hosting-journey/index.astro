@@ -1,0 +1,74 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import Footer from '../../../components/Footer.astro';
+---
+
+<Layout title="Self-hosting journey · Blog" description="Notes on getting the Liva compiler to compile itself, byte-identically.">
+  <Nav />
+
+  <main class="min-h-screen pt-32 pb-24">
+    <article class="max-w-3xl mx-auto px-6">
+      <p class="section-num text-[color:var(--color-ink-3)] mb-4">
+        <a href="/blog" class="hover:text-[color:var(--color-accent)] transition-colors">← blog</a>
+      </p>
+
+      <div class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)] mb-3 uppercase tracking-wider">
+        2026-04-12 · compiler · bootstrap
+      </div>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight leading-[1.05] mb-6">
+        Notes on getting Liva to compile itself
+      </h1>
+      <p class="text-[color:var(--color-ink-2)] text-[17px] leading-relaxed mb-10">
+        Phase 7 of the self-hosting plan closed in April. The compiler is now
+        written entirely in Liva and produces a byte-identical binary across
+        generations. Below: what broke, what worked, and what we’d skip
+        next time.
+      </p>
+
+      <h2 class="font-display text-2xl tracking-tight mt-12 mb-4">The three generations test</h2>
+      <p class="text-[15px] text-[color:var(--color-ink-2)] leading-relaxed mb-4">
+        Self-hosting isn’t real until gen2 == gen3. Our CI runs:
+      </p>
+      <ol class="space-y-2 text-[15px] text-[color:var(--color-ink-2)] list-decimal pl-6 mb-6">
+        <li>Compile the Liva sources of livac with the Rust-implemented bootstrap binary → <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac-gen1</code>.</li>
+        <li>Use gen1 to compile its own Liva sources → <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac-gen2</code>.</li>
+        <li>Use gen2 to compile the same sources again → <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">livac-gen3</code>.</li>
+        <li><code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">cmp livac-gen2 livac-gen3</code> must be byte-identical.</li>
+      </ol>
+      <p class="text-[15px] text-[color:var(--color-ink-2)] leading-relaxed mb-4">
+        We didn’t get there on the first try. The first 16 gen2/gen3 diffs
+        all came down to non-deterministic hash-map iteration leaking into
+        codegen order. <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">IndexMap</code> everywhere fixed it.
+      </p>
+
+      <h2 class="font-display text-2xl tracking-tight mt-12 mb-4">What broke worst</h2>
+      <ul class="space-y-3 text-[15px] text-[color:var(--color-ink-2)]">
+        <li><strong>BS-FRAG</strong>: a class of bootstrap bugs where the bootstrap binary mishandled certain enum patterns the new compiler depended on. Fixed by pinning a known-good seed binary in <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">bootstrap/seed/</code>.</li>
+        <li><strong>Recursive enums</strong>: needed implicit auto-boxing during codegen. We bootstrapped a manual <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">Box</code>-emitter first, then refactored once self-hosting closed.</li>
+        <li><strong>Error trace chaining</strong>: surprisingly hard to express without exceptions. Landed as <code class="px-1.5 py-0.5 bg-[color:var(--color-paper-2)] font-mono-tight text-[13px]">or fail</code> with implicit cause linking.</li>
+      </ul>
+
+      <h2 class="font-display text-2xl tracking-tight mt-12 mb-4">What we’d skip</h2>
+      <p class="text-[15px] text-[color:var(--color-ink-2)] leading-relaxed mb-4">
+        We spent a sprint trying to keep the Rust-implemented compiler and
+        the Liva-implemented compiler in sync feature-for-feature so we
+        could switch back and forth. It wasn’t worth it. The Rust one is
+        archived now and only exists to bootstrap from source.
+      </p>
+
+      <hr class="hairline my-12" />
+
+      <div class="flex items-center justify-between font-mono-tight text-[13px]">
+        <a href="/roadmap" class="text-[color:var(--color-ink-2)] hover:text-[color:var(--color-accent)] transition-colors">
+          ← roadmap
+        </a>
+        <a href="https://github.com/liva-lang/livac" target="_blank" rel="noopener" class="text-[color:var(--color-accent)] link-anim">
+          source on GitHub →
+        </a>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

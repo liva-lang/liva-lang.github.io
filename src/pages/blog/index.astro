@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const posts = [
+  {
+    slug: 'v2-3-released',
+    date: '2026-05-21',
+    title: 'Liva 2.3 — Tooling completion',
+    excerpt:
+      'REPL, doc generator, bench runner, coverage, Jest hooks, lazy iterator chain fusion. The compiler grew up — now the tooling did too.',
+    tags: ['release', 'tooling'],
+  },
+  {
+    slug: 'self-hosting-journey',
+    date: '2026-04-12',
+    title: 'Notes on getting Liva to compile itself',
+    excerpt:
+      'Phase 7 closed: the compiler is now written entirely in Liva and produces a byte-identical binary across generations. Here is what broke and what worked.',
+    tags: ['compiler', 'bootstrap'],
+  },
+];
+---
+
+<Layout title="Blog · Liva" description="Release notes, design decisions, and dogfooding notes from the Liva team.">
+  <Nav />
+
+  <main class="min-h-screen pt-32 pb-24">
+    <div class="max-w-3xl mx-auto px-6">
+      <p class="section-num text-[color:var(--color-ink-3)] mb-4">00 · blog</p>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight leading-[1.05] mb-4">
+        Release notes, design decisions, and dogfooding notes.
+      </h1>
+      <p class="text-[color:var(--color-ink-2)] max-w-2xl text-[15px] leading-relaxed">
+        Short, technical posts. No marketing. Subscribe via the
+        <a href="https://github.com/liva-lang/livac/releases.atom" class="underline decoration-[color:var(--color-accent)] underline-offset-4 hover:text-[color:var(--color-accent)]">RSS feed</a>
+        of GitHub releases, or just check back.
+      </p>
+
+      <hr class="hairline my-12" />
+
+      <ul class="space-y-12">
+        {posts.map(p => (
+          <li>
+            <a href={`/blog/${p.slug}`} class="block group">
+              <div class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)] mb-2 uppercase tracking-wider">
+                {p.date} · {p.tags.join(' · ')}
+              </div>
+              <h2 class="font-display text-2xl md:text-3xl tracking-tight leading-tight mb-2 group-hover:text-[color:var(--color-accent)] transition-colors">
+                {p.title}
+              </h2>
+              <p class="text-[color:var(--color-ink-2)] text-[15px] leading-relaxed max-w-2xl">
+                {p.excerpt}
+              </p>
+              <div class="font-mono-tight text-[12px] text-[color:var(--color-accent)] mt-3 link-anim inline-block">
+                read →
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
