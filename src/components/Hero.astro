@@ -15,29 +15,26 @@ const highlighter = await createHighlighter({
 const heroCode = `// server.liva
 import { Server, Response } from "http"
 
-User {
-    id: number
-    name: string
-}
-
-getUser(id: number): User {
-    let row = DB.query("SELECT * FROM users WHERE id = ?", [id])
-        or fail $"User {id} not found"
-
-    return User(row.id, row.name)
-}
+User { id: number; name: string }
 
 main() {
+    let db, err = DB.open("app.db")
+    if err => fail err
+    defer DB.close(db)
+
     let app = Server.create()
 
     app.get("/users/:id", (req) => {
-        let user, err = getUser(req.param("id"))
-        if err => return Response.status(404).text(err)
-        return Response.json(user)
+        let id = req.params.get("id")
+        let rows, e = DB.query(db,
+            "SELECT id, name FROM users WHERE id = ?", [id])
+        if e => return Response.status(500).text(e)
+        if rows.length == 0 => return Response.status(404).text("not found")
+        return Response.json(rows[0])
     })
 
+    Log.info("listening on :3000")
     app.listen(3000)
-    Log.info("Listening on :3000")
 }`;
 
 const codeHtml = highlighter.codeToHtml(heroCode, { lang: 'liva', theme: 'github-light' });

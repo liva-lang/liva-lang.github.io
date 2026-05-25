@@ -17,29 +17,29 @@ const examples = [
     label: 'types',
     title: 'Types & inference',
     code: `// Liva infers what you don't write
-let count = 42                     // number
-let name: string = "Alice"         // explicit
+let count = 42                     // number (i32)
+let ratio: float = 3.14            // float (f64)
+let name: string = "Alice"         // explicit type
 let active = true                  // bool
-let scores = [90, 85, 92, 88]      // [number]
-let user = Map { "name": "Ann" }   // Map<string,string>
+const MAX: number = 100            // immutable
 
-// Numeric operators (all the usuals)
-let n = 17
-let half = n / 2     // float division → 8.5
-let div = n // 2     // floor division → 8
-let mod = n % 5      // 2
-let pow = 2 ** 10    // 1024
+// Collections
+let scores = [90, 85, 92, 88]               // [number]
+let user = Map { "name": "Ann", "city": "NY" }  // Map<string,string>
+let tags = Set { "rust", "liva" }           // Set<string>
+
+// Destructuring
+let [first, second] = scores
+let [head, ...tail] = scores
 
 // String templates
-let greeting = $"hi {name}, you scored {scores[0]}"`,
+let greeting = $"hi {name}, top score: {scores[0]}"`,
   },
   {
     label: 'errors',
     title: 'Errors are values',
-    code: `import { File } from "io"
-
-parsePort(s: string): number {
-    let n, err = Number.parse(s)
+    code: `parsePort(s: string): number {
+    let n, err = parseInt(s)
     if err => fail $"not a number: {s}"
     if n < 1 || n > 65535 => fail "out of range"
     return n
@@ -48,16 +48,18 @@ parsePort(s: string): number {
 main() {
     // (value, error) on every fallible call
     let port, err = parsePort("8080")
-    if err => print($"error: {err}")
+    if err { print($"error: {err}") }
 
-    // or fail → propagate
+    // or fail → propagate the error
     let cfg = File.read("config.json") or fail
 
-    // or <default> → heal
+    // or <default> → heal with a fallback
     let timeout = parsePort("nope") or 3000
 
-    // or fail "msg" → propagate with context
-    let port2 = parsePort(input) or fail "bad port"
+    // or fail "msg" → propagate with extra context
+    let port2 = parsePort("443") or fail "bad port"
+
+    Log.info($"port={port}, timeout={timeout}")
 }`,
   },
   {
@@ -93,54 +95,58 @@ main() {
   {
     label: 'enums',
     title: 'Enums & pattern matching',
-    code: `// Recursive enum (auto-boxed)
-Tree {
+    code: `// Recursive enum — fields are auto-boxed
+enum Tree {
     Leaf,
     Node(value: number, left: Tree, right: Tree)
 }
 
 depth(t: Tree): number => switch t {
-    Leaf => 0,
-    Node(_, l, r) => 1 + Math.max(depth(l), depth(r))
+    Tree.Leaf => 0,
+    Tree.Node(_, l, r) => 1 + Math.max(depth(l), depth(r))
 }
 
 main() {
-    let t = Node(10,
-              Node(5, Leaf, Leaf),
-              Node(15, Leaf, Node(20, Leaf, Leaf)))
+    let t = Tree.Node(10,
+              Tree.Node(5, Tree.Leaf, Tree.Leaf),
+              Tree.Node(15, Tree.Leaf,
+                Tree.Node(20, Tree.Leaf, Tree.Leaf)))
 
     print($"depth = {depth(t)}")  // 3
 
-    // Exhaustive switch — compiler enforces E0904
-    // (commenting one case here would error)
+    // Switch is exhaustive — compiler enforces E0904
+    // if any variant is missing in an expression-position switch.
 }`,
   },
   {
     label: 'classes',
     title: 'Classes & interfaces',
-    code: `Printable {
+    code: `// Interface — only method signatures
+Printable {
     format(): string
 }
 
+// Class implementing an interface (" : Printable")
 User : Printable {
     name: string
     email: string
-    private created: number
+    _created: number       // _-prefix = private (no "private" keyword)
 
     constructor(name: string, email: string) {
         this.name = name
         this.email = email
-        this.created = Date.now()
+        this._created = Date.now()
     }
 
     format(): string => $"{this.name} <{this.email}>"
 
-    age(): number => Date.now() - this.created
+    ageMs(): number => Date.now() - this._created
 }
 
 main() {
     let u = User("Ada", "ada@dev.io")
-    print(u.format())
+    print(u.format())          // Ada <ada@dev.io>
+    print($"age = {u.ageMs()} ms")
 }`,
   },
   {
@@ -153,21 +159,22 @@ main() {
 }
 
 main() {
-    // Async I/O — separate (value, error) channel
+    // async — I/O on the runtime
     let body, err = async fetchUser(1)
+    if err { Log.warn("fetch failed", err) }
 
-    // CPU work on its own thread
+    // par — CPU-bound work on its own thread
     let result = par heavyMath(1_000_000)
 
-    // Task handle — explicit await
+    // task — explicit handle, then await
     let t = task async fetchUser(2)
     let body2, err2 = await t
 
-    // Parallel collections
+    // Parallel collections via .par()
     let nums = [1, 2, 3, 4, 5]
     let doubled = nums.par().map(x => x * 2)
 
-    // Data-parallel for
+    // Data-parallel for with explicit policy
     for par item in items with chunk 2 threads 4 {
         process(item)
     }
@@ -179,23 +186,28 @@ main() {
     code: `import { Server, Response } from "http"
 
 main() {
+    let db, err = DB.open("app.db")
+    if err => fail err
+    defer DB.close(db)
+
     let app = Server.create()
 
     app.get("/", (req) => Response.text("hello, world"))
 
     app.get("/users/:id", (req) => {
-        let id = req.param("id")
-        let user, err = DB.queryOne(
-            "SELECT * FROM users WHERE id = ?", [id]
-        )
-        if err => return Response.status(404).text(err)
-        return Response.json(user)
+        let id = req.params.get("id")
+        let rows, e = DB.query(db,
+            "SELECT * FROM users WHERE id = ?", [id])
+        if e => return Response.status(500).text(e)
+        if rows.length == 0 => return Response.status(404).text("not found")
+        return Response.json(rows[0])
     })
 
     app.post("/users", (req) => {
-        let body = req.json()
-        DB.exec("INSERT INTO users (name) VALUES (?)", [body.name])
-        return Response.status(201).json(body)
+        let body = req.body
+        let _, e = DB.exec(db, "INSERT INTO users (name) VALUES (?)", [body])
+        if e => return Response.status(500).text(e)
+        return Response.status(201).text("created")
     })
 
     Log.info("listening on :3000")
@@ -205,11 +217,13 @@ main() {
   {
     label: 'tests',
     title: 'Built-in tests',
-    code: `// run with: livac test math.liva
-import { square, clamp } from "./math"
+    code: `// run with:  livac test
+// file:       math.test.liva
+import { square, clamp, parseAge } from "./math"
 
 describe("math utils") {
     beforeEach(() => Log.debug("setup"))
+    afterEach(() => Log.debug("teardown"))
 
     test("square works") {
         expect(square(5)).toBe(25)
