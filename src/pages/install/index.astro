@@ -1,0 +1,179 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { codeToHtml } from 'shiki';
+
+const sh = (code: string) =>
+  codeToHtml(code, { lang: 'bash', theme: 'github-light' });
+
+const methods = [
+  {
+    key: 'curl',
+    label: 'Linux / macOS — one-liner',
+    body: `# downloads + extracts + drops livac on $PATH
+curl -fsSL https://raw.githubusercontent.com/liva-lang/livac/main/scripts/install.sh | bash
+
+# verify
+livac --version`,
+  },
+  {
+    key: 'deb',
+    label: 'Debian / Ubuntu — .deb package',
+    body: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac_amd64.deb -o livac.deb
+sudo dpkg -i livac.deb
+
+livac --version`,
+  },
+  {
+    key: 'rpm',
+    label: 'Fedora / RHEL — .rpm package',
+    body: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac.x86_64.rpm -o livac.rpm
+sudo rpm -i livac.rpm
+
+livac --version`,
+  },
+  {
+    key: 'mac',
+    label: 'macOS — tarball (Apple Silicon)',
+    body: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac-macos-arm64.tar.gz | tar xz
+sudo mv livac /usr/local/bin/
+
+livac --version`,
+  },
+  {
+    key: 'brew',
+    label: 'Homebrew tap (macOS / Linux)',
+    body: `brew tap liva-lang/livac https://github.com/liva-lang/livac
+brew install livac
+
+livac --version`,
+  },
+  {
+    key: 'scoop',
+    label: 'Scoop (Windows)',
+    body: `scoop bucket add liva https://github.com/liva-lang/livac
+scoop install livac
+
+livac --version`,
+  },
+  {
+    key: 'zip',
+    label: 'Windows — zip archive',
+    body: `Invoke-WebRequest \`
+  -Uri https://github.com/liva-lang/livac/releases/latest/download/livac-windows-x64.zip \`
+  -OutFile livac.zip
+Expand-Archive livac.zip C:\\livac
+# add C:\\livac to PATH, then:
+livac --version`,
+  },
+  {
+    key: 'cargo',
+    label: 'From source — any platform',
+    body: `git clone https://github.com/liva-lang/livac
+cd livac
+cargo build --release
+sudo cp target/release/livac /usr/local/bin/
+
+livac --version`,
+  },
+];
+
+const renderedMethods = await Promise.all(
+  methods.map(async m => ({ ...m, html: await sh(m.body) })),
+);
+
+const firstProject = `livac init hello
+cd hello
+livac run main.liva`;
+
+const updateBlock = `# upgrade to the latest release
+livac update`;
+
+const editorBlock = `# install the VS Code / Cursor extension
+code --install-extension liva-lang.liva-vscode
+# or, from a .vsix:
+code --install-extension liva-vscode-0.15.0.vsix`;
+
+const firstProjectHtml = await sh(firstProject);
+const updateHtml = await sh(updateBlock);
+const editorHtml = await sh(editorBlock);
+---
+
+<Layout title="Install — Liva" description="Get the Liva compiler on your machine.">
+  <Nav />
+  <main class="border-b hairline">
+    <section class="py-20 md:py-28 border-b hairline">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="section-num mb-3">§ · install</div>
+        <h1 class="font-display text-4xl md:text-5xl leading-tight tracking-tight">
+          A single binary.<br/>No runtime.
+        </h1>
+        <p class="mt-4 text-[color:var(--color-ink-2)] max-w-2xl">
+          The compiler is one static executable. Pick the channel that matches your OS;
+          they all land at the same place — <code class="font-mono-tight text-[13px]">livac</code> on your <code class="font-mono-tight text-[13px]">$PATH</code>.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20 border-b hairline">
+      <div class="max-w-4xl mx-auto px-6 space-y-12">
+        {renderedMethods.map(m => (
+          <article>
+            <h2 class="font-mono-tight text-[12px] uppercase tracking-[0.18em] text-[color:var(--color-ink-3)] mb-3">
+              {m.label}
+            </h2>
+            <div class="bg-[color:var(--color-paper-2)] border hairline p-5 text-[13px] overflow-x-auto" set:html={m.html} />
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20 border-b hairline">
+      <div class="max-w-4xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+        <div>
+          <h2 class="font-display text-2xl tracking-tight mb-3">First project</h2>
+          <p class="text-[color:var(--color-ink-2)] mb-4">
+            <code class="font-mono-tight text-[13px]">livac init</code> scaffolds a runnable project — a
+            <code class="font-mono-tight text-[13px]">main.liva</code>, a
+            <code class="font-mono-tight text-[13px]">.gitignore</code>, and a README to start from.
+          </p>
+          <div class="bg-[color:var(--color-paper-2)] border hairline p-5 text-[13px] overflow-x-auto" set:html={firstProjectHtml} />
+        </div>
+
+        <div>
+          <h2 class="font-display text-2xl tracking-tight mb-3">Update</h2>
+          <p class="text-[color:var(--color-ink-2)] mb-4">
+            The compiler ships its own updater. It downloads the latest release for your
+            platform from GitHub and atomically replaces the binary.
+          </p>
+          <div class="bg-[color:var(--color-paper-2)] border hairline p-5 text-[13px] overflow-x-auto" set:html={updateHtml} />
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20">
+      <div class="max-w-4xl mx-auto px-6">
+        <h2 class="font-display text-2xl tracking-tight mb-3">Editor support</h2>
+        <p class="text-[color:var(--color-ink-2)] mb-4 max-w-2xl">
+          Liva ships an LSP server (built into the compiler) and a VS Code / Cursor extension
+          covering syntax highlighting, 300+ snippets, completion, diagnostics, hover, go-to,
+          and one-click <code class="font-mono-tight text-[13px]">test</code> /
+          <code class="font-mono-tight text-[13px]">bench</code> /
+          <code class="font-mono-tight text-[13px]">repl</code> commands.
+        </p>
+        <div class="bg-[color:var(--color-paper-2)] border hairline p-5 text-[13px] overflow-x-auto" set:html={editorHtml} />
+        <p class="mt-5 font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">
+          source →
+          <a
+            href="https://github.com/liva-lang/vscode-extension"
+            class="link-anim text-[color:var(--color-accent)] ml-1"
+            target="_blank"
+            rel="noopener"
+          >github.com/liva-lang/vscode-extension</a>
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
