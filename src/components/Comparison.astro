@@ -1,80 +1,74 @@
 ---
+const rows = [
+  { trait: 'Clean, expressive syntax',         liva: '✓',  ts: '✓',  py: '✓',  rs: '~' },
+  { trait: 'Compiled to native',               liva: '✓',  ts: '✗',  py: '✗',  rs: '✓' },
+  { trait: 'No garbage collector',             liva: '✓',  ts: '✗',  py: '✗',  rs: '✓' },
+  { trait: 'Static type checking',             liva: '✓',  ts: '✓',  py: '~',  rs: '✓' },
+  { trait: 'Errors as values (no exceptions)', liva: '✓',  ts: '~',  py: '✗',  rs: '✓' },
+  { trait: 'Batteries-included stdlib',        liva: '✓',  ts: '~',  py: '✓',  rs: '~' },
+  { trait: 'Learning curve',                   liva: 'easy', ts: 'easy', py: 'easy', rs: 'steep' },
+];
+
+const cell = (v: string) => {
+  if (v === '✓') return { c: 'text-[color:var(--color-leaf)] font-semibold', t: '✓' };
+  if (v === '✗') return { c: 'text-[color:var(--color-ink-3)]', t: '—' };
+  if (v === '~') return { c: 'text-[color:var(--color-accent)]', t: '◐' };
+  return { c: 'text-[color:var(--color-ink-2)] text-[12px] font-mono-tight', t: v };
+};
+
+const langs = ['Liva', 'TypeScript', 'Python', 'Rust'] as const;
 ---
 
-<section class="py-24 md:py-32">
+<section id="compare" class="py-24 md:py-32 bg-[color:var(--color-paper-2)] border-b hairline">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
-        The best of both worlds
+    <div class="mb-12">
+      <div class="section-num mb-3">§ 04 · honest comparison</div>
+      <h2 class="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">
+        Where Liva sits.
       </h2>
-      <p class="text-base-content/60 text-lg max-w-2xl mx-auto">
-        Liva fills the gap between easy-to-write scripting languages and high-performance systems languages.
+      <p class="mt-4 max-w-xl text-[15px] text-[color:var(--color-ink-2)] leading-relaxed">
+        No silver bullets. Liva trades a younger ecosystem for compiled performance, clean ergonomics, and zero GC pauses.
       </p>
     </div>
 
-    <div class="overflow-x-auto rounded-box border border-base-content/5">
-      <table class="table table-zebra">
+    <div class="overflow-x-auto border hairline bg-[color:var(--color-paper)]">
+      <table class="w-full">
         <thead>
-          <tr>
-            <th class="text-base-content/60"></th>
-            <th class="text-center font-bold text-primary text-base">Liva</th>
-            <th class="text-center text-base-content/60">TypeScript</th>
-            <th class="text-center text-base-content/60">Python</th>
-            <th class="text-center text-base-content/60">Rust</th>
+          <tr class="border-b hairline">
+            <th class="text-left p-4 font-mono-tight text-[11px] uppercase tracking-[0.18em] text-[color:var(--color-ink-3)] font-normal">trait</th>
+            {langs.map(l => (
+              <th class:list={[
+                'p-4 text-center font-mono-tight text-[12px] uppercase tracking-[0.15em] font-normal',
+                l === 'Liva' ? 'text-[color:var(--color-accent)]' : 'text-[color:var(--color-ink-3)]',
+              ]}>{l}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="font-medium">Clean syntax</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">—</td>
-          </tr>
-          <tr>
-            <td class="font-medium">Type safety</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-success">✓</td>
-          </tr>
-          <tr>
-            <td class="font-medium">Native performance</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-success">✓</td>
-          </tr>
-          <tr>
-            <td class="font-medium">Memory safety</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">GC</td>
-            <td class="text-center text-base-content/30">GC</td>
-            <td class="text-center text-success">✓</td>
-          </tr>
-          <tr>
-            <td class="font-medium">No GC / No runtime</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-success">✓</td>
-          </tr>
-          <tr>
-            <td class="font-medium">Easy to learn</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">—</td>
-          </tr>
-          <tr>
-            <td class="font-medium">Explicit errors</td>
-            <td class="text-center text-success">✓</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-base-content/30">—</td>
-            <td class="text-center text-success">✓</td>
-          </tr>
+          {rows.map((r, i) => (
+            <tr class:list={['border-b hairline last:border-b-0', i % 2 === 1 ? 'bg-[color:var(--color-paper-2)]/40' : '']}>
+              <td class="p-4 text-[14px]">{r.trait}</td>
+              {[r.liva, r.ts, r.py, r.rs].map((v, ci) => {
+                const c = cell(v);
+                return (
+                  <td class:list={[
+                    'p-4 text-center',
+                    ci === 0 ? 'bg-[color:var(--color-accent)]/5' : '',
+                  ]}>
+                    <span class={c.c}>{c.t}</span>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
         </tbody>
       </table>
+    </div>
+
+    <div class="mt-6 flex items-center gap-5 font-mono-tight text-[11px] text-[color:var(--color-ink-3)]">
+      <span><span class="text-[color:var(--color-leaf)] font-semibold">✓</span> yes</span>
+      <span><span class="text-[color:var(--color-accent)]">◐</span> partial</span>
+      <span><span class="text-[color:var(--color-ink-3)]">—</span> no</span>
     </div>
   </div>
 </section>

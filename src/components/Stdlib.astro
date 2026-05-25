@@ -1,0 +1,80 @@
+---
+const groups = [
+  {
+    head: 'core',
+    items: [
+      { name: 'string', count: 28 },
+      { name: 'array', count: 31 },
+      { name: 'math', count: 14 },
+      { name: 'map', count: 11 },
+      { name: 'set', count: 8 },
+    ],
+  },
+  {
+    head: 'i/o',
+    items: [
+      { name: 'file', count: 11 },
+      { name: 'dir', count: 7 },
+      { name: 'process', count: 4 },
+      { name: 'log', count: 6 },
+      { name: 'config', count: 5 },
+    ],
+  },
+  {
+    head: 'data',
+    items: [
+      { name: 'regex', count: 5 },
+      { name: 'date', count: 14 },
+      { name: 'csv', count: 8 },
+      { name: 'json', count: 4 },
+      { name: 'crypto', count: 4 },
+    ],
+  },
+  {
+    head: 'net & db',
+    items: [
+      { name: 'http server', count: 'axum' },
+      { name: 'http client', count: 6 },
+      { name: 'sqlite', count: 4 },
+      { name: 'random', count: 5 },
+      { name: 'rust { }', count: 'interop' },
+    ],
+  },
+];
+---
+
+<section id="stdlib" class="py-24 md:py-32 border-b hairline">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-baseline justify-between mb-14 flex-wrap gap-4">
+      <div>
+        <div class="section-num mb-3">§ 03 · stdlib at a glance</div>
+        <h2 class="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">
+          130+ functions, zero <span class="font-mono-tight text-[0.9em] text-[color:var(--color-ink-3)]">npm install</span>.
+        </h2>
+      </div>
+      <p class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)] max-w-sm">
+        Everything below ships with the compiler — no packages, no lockfiles, no dependency tree to audit on Friday afternoon.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-10">
+      {groups.map(g => (
+        <div>
+          <h3 class="eyebrow text-[color:var(--color-accent)] mb-4 pb-2 border-b hairline">{g.head}</h3>
+          <ul class="space-y-2">
+            {g.items.map(it => (
+              <li class="flex items-baseline justify-between gap-3 font-mono-tight text-[13px]">
+                <span class="text-[color:var(--color-ink)]">{it.name}</span>
+                <span class="text-[color:var(--color-ink-3)] text-[11px]">{it.count}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-14 max-w-2xl text-[15px] leading-relaxed text-[color:var(--color-ink-2)] border-l-2 border-[color:var(--color-accent)] pl-5">
+      Build a working REST API with auth, SQLite, JSON, logging, and env config — without installing anything. Yes, really.
+    </p>
+  </div>
+</section>

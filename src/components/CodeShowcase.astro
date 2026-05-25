@@ -5,466 +5,322 @@ import path from 'node:path';
 
 const grammarPath = path.join(process.cwd(), 'src/grammars/liva.tmLanguage.json');
 const livaGrammar = JSON.parse(fs.readFileSync(grammarPath, 'utf-8'));
-livaGrammar.name = 'liva'; // normalize for Shiki lookup
+livaGrammar.name = 'liva';
 
 const highlighter = await createHighlighter({
-  themes: ['github-dark'],
+  themes: ['github-light'],
   langs: [livaGrammar],
 });
 
 const examples = [
   {
-    title: 'Types & Operators',
-    subtitle: 'Primitives, Rust types, defaults, or <value>',
-    code: `main() {
-    // Liva primitives (inferred or explicit)
-    let name: string = "Alice"
-    let age: number = 25         // i32
-    let height: float = 1.75     // f64
-    let active: bool = true
+    label: 'types',
+    title: 'Types & inference',
+    code: `// Liva infers what you don't write
+let count = 42                     // number
+let name: string = "Alice"         // explicit
+let active = true                  // bool
+let scores = [90, 85, 92, 88]      // [number]
+let user = Map { "name": "Ann" }   // Map<string,string>
 
-    // Rust integer & float types
-    let big: i64 = 9999999999
-    let small: u8 = 255
-    let precise: f32 = 3.14
-    let idx: usize = 100
+// Numeric operators (all the usuals)
+let n = 17
+let half = n / 2     // float division → 8.5
+let div = n // 2     // floor division → 8
+let mod = n % 5      // 2
+let pow = 2 ** 10    // 1024
 
-    // Collections & optional
-    let scores = [95, 87, 92]
-    let maybe: number? = null
-
-    // or <value> — default when call fails
-    let port = parsePort("abc") or 3000
-    let cfg = File.read("app.json") or "{}"
-
-    // Operators & ternary
-    let status = age >= 18 ? "Adult" : "Minor"
-    let canVote = age >= 18 and active
-
-    print($"{name}: {status}, port={port}")
-}`,
+// String templates
+let greeting = $"hi {name}, you scored {scores[0]}"`,
   },
   {
-    title: 'Functions & One-liners',
-    subtitle: 'Arrow syntax, defaults, tuples, point-free',
-    code: `// Arrow functions (one-liners)
-square(x: number): number => x * x
-greet(name: string = "World") => $"Hello, {name}!"
+    label: 'errors',
+    title: 'Errors are values',
+    code: `import { File } from "io"
 
-// Block function with guards
-clamp(val: number, lo: number, hi: number): number {
-    if val < lo => return lo
-    if val > hi => return hi
-    return val
-}
-
-// Tuple return
-getPoint(): (number, number) => (10, 20)
-
-// Fallible function
-parseAge(input: string): number {
-    let n, err = Number.parse(input)
-    if err => fail $"Invalid age: {input}"
-    if n < 0 or n > 150 => fail "Age out of range"
+parsePort(s: string): number {
+    let n, err = Number.parse(s)
+    if err => fail $"not a number: {s}"
+    if n < 1 || n > 65535 => fail "out of range"
     return n
 }
 
 main() {
-    let nums = [1, 2, 3, 4, 5]
-    nums.forEach(print)       // point-free reference
-    let doubled = nums.map(x => x * 2)
-
-    let p = getPoint()
-    print($"x={p.0}, y={p.1}, clamped={clamp(150, 0, 100)}")
-}`,
-  },
-  {
-    title: 'Loops & Control Flow',
-    subtitle: 'for, while, ranges, break/continue, one-liner =>',
-    code: `main() {
-    // Range loops (inclusive)
-    for i in 1..=5 => print(i)     // 1,2,3,4,5
-
-    // Array iteration
-    let names = ["Alice", "Bob", "Charlie"]
-    for name in names {
-        print($"Hi, {name}!")
-    }
-
-    // While with break/continue
-    let n = 0
-    while n < 20 {
-        n = n + 1
-        if n % 2 == 0 => continue
-        if n > 10 => break
-        print($"Odd: {n}")
-    }
-
-    // One-liner if
-    if names.length > 0 => print("Not empty!")
-
-    // Switch statement
-    let role = "admin"
-    switch role {
-        case "admin": print("Full access")
-        case "user": print("Limited access")
-        default: print("Unknown role")
-    }
-}`,
-  },
-  {
-    title: 'Classes & Visibility',
-    subtitle: '_prefix = private — no keywords needed',
-    code: `Account {
-    owner: string              // public field
-    _balance: number           // private (_ prefix)
-
-    constructor(owner: string, initial: number) {
-        this.owner = owner
-        this._balance = initial
-    }
-
-    deposit(amount: number) {
-        if amount <= 0 => fail "Invalid amount"
-        this._balance = this._balance + amount
-    }
-
-    withdraw(amount: number) {
-        if amount > this._balance => fail "Insufficient funds"
-        this._balance = this._balance - amount
-    }
-
-    getBalance(): number => this._balance
-    _log(msg: string) => print($"[LOG] {msg}")
-}
-
-main() {
-    let acc = Account("Alice", 1000)
-    acc.deposit(500) or fail
-    acc.withdraw(200) or fail
-    print($"{acc.owner}: {acc.getBalance()}")  // 1300
-}`,
-  },
-  {
-    title: 'Enums & Pattern Matching',
-    subtitle: 'Algebraic types, switch expressions, guards',
-    code: `enum Shape {
-    Circle(radius: number),
-    Rectangle(w: number, h: number),
-    Point
-}
-
-area(s: Shape): number => switch s {
-    Shape.Circle(r) => 3.14159 * r * r,
-    Shape.Rectangle(w, h) => w * h,
-    Shape.Point => 0
-}
-
-describe(s: Shape): string => switch s {
-    Shape.Circle(r) if r > 100 => "Huge circle",
-    Shape.Circle(r) => $"Circle r={r}",
-    Shape.Rectangle(w, h) => $"{w}x{h} rect",
-    _ => "Just a point"
-}
-
-main() {
-    let shapes = [
-        Shape.Circle(5),
-        Shape.Rectangle(3, 4),
-        Shape.Point
-    ]
-    for s in shapes {
-        print($"{describe(s)}, area={area(s)}")
-    }
-}`,
-  },
-  {
-    title: 'Error Handling',
-    subtitle: 'fail, error binding, or fail, or <default>',
-    code: `parsePort(input: string): number {
-    let port, err = Number.parse(input)
-    if err => fail $"Invalid port: {input}"
-    if port < 1 or port > 65535 => fail "Port out of range"
-    return port
-}
-
-loadConfig(path: string): string {
-    let content = File.read(path) or fail "File not found"
-    let config = JSON.parse(content) or fail "Invalid JSON"
-    return config
-}
-
-main() {
-    // Error binding — capture value + error
+    // (value, error) on every fallible call
     let port, err = parsePort("8080")
-    if err => print($"Error: {err}")
+    if err => print($"error: {err}")
 
-    // or fail — propagate errors up
-    let cfg = loadConfig("config.json") or fail
+    // or fail → propagate
+    let cfg = File.read("config.json") or fail
 
-    // or <value> — default when call fails
-    let port2 = parsePort("abc") or 3000   // 3000
-    let port3 = parsePort("443") or 3000   // 443
+    // or <default> → heal
+    let timeout = parsePort("nope") or 3000
 
-    // Chain fallible calls
-    let data = File.read("data.csv") or fail "No data"
-    let lines = data.split("\\n")
-    print($"Loaded {lines.length} lines on port {port}")
+    // or fail "msg" → propagate with context
+    let port2 = parsePort(input) or fail "bad port"
 }`,
   },
   {
-    title: 'Functional Collections',
-    subtitle: 'map, filter, reduce, destructuring, join',
-    code: `isEven(x: number): bool => x % 2 == 0
+    label: 'fns',
+    title: 'Functions, lambdas, point-free',
+    code: `// Multi-line function
+square(x: number): number {
+    return x * x
+}
+
+// One-liner with =>
+double(x: number): number => x * 2
+
+// Inferred return type
+greet(name: string) => $"hello, {name}"
 
 main() {
-    let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    let nums = [1, 2, 3, 4, 5]
 
-    // Chained operations with point-free refs
-    let result = nums
-        .filter(isEven)              // point-free ref
-        .map(x => x * x)            // lambda
-        .reduce(0, (a, b) => a + b)
+    // Point-free: pass function by name
+    let squares = nums.map(square)         // [1,4,9,16,25]
 
-    print($"Sum of even squares: {result}")  // 220
+    // Inline lambda
+    let evens = nums.filter(x => x % 2 == 0)
 
-    // Array destructuring
-    let [first, , third] = ["a", "b", "c"]
-    let [head, ...tail] = nums
-
-    // String join
-    let names = ["Alice", "Bob", "Charlie"]
-    let csv = names.join(", ")
+    // Composition with reduce
+    let sum = nums.reduce(0, (a, b) => a + b)
 
     // forEach with point-free
-    names.forEach(print)
-
-    print($"head={head}, tail={tail.length} items")
-    print($"csv: {csv}")
+    nums.forEach(print)
 }`,
   },
   {
+    label: 'enums',
+    title: 'Enums & pattern matching',
+    code: `// Recursive enum (auto-boxed)
+Tree {
+    Leaf,
+    Node(value: number, left: Tree, right: Tree)
+}
+
+depth(t: Tree): number {
+    switch t {
+        case Leaf => 0
+        case Node(_, l, r) => 1 + Math.max(depth(l), depth(r))
+    }
+}
+
+main() {
+    let t = Node(10,
+              Node(5, Leaf, Leaf),
+              Node(15, Leaf, Node(20, Leaf, Leaf)))
+
+    print($"depth = {depth(t)}")  // 3
+
+    // Exhaustive switch — compiler enforces E0904
+    // (commenting one case here would error)
+}`,
+  },
+  {
+    label: 'classes',
+    title: 'Classes & interfaces',
+    code: `Printable {
+    format(): string
+}
+
+User : Printable {
+    name: string
+    email: string
+    private created: number
+
+    constructor(name: string, email: string) {
+        this.name = name
+        this.email = email
+        this.created = Date.now()
+    }
+
+    format(): string => $"{this.name} <{this.email}>"
+
+    age(): number => Date.now() - this.created
+}
+
+main() {
+    let u = User("Ada", "ada@dev.io")
+    print(u.format())
+}`,
+  },
+  {
+    label: 'concur',
     title: 'Concurrency',
-    subtitle: 'async, par, task/await, parallel policies',
     code: `fetchUser(id: number): string {
-    let resp, err = HTTP.get(
-        $"https://api.example.com/users/{id}"
-    )
+    let resp, err = HTTP.get($"https://api/users/{id}")
     if err => fail err
     return resp.body
 }
 
 main() {
-    // Async I/O — error binding with async
-    let user, err = async fetchUser(1)
-    if err => print($"Failed: {err}")
+    // Async I/O — separate (value, error) channel
+    let body, err = async fetchUser(1)
 
-    // Parallel CPU work (separate thread)
-    let result = par heavyCalculation(1000)
+    // CPU work on its own thread
+    let result = par heavyMath(1_000_000)
 
-    // Fire and forget (auto-inferred)
-    async logEvent("started")
-
-    // Task handle — explicit control
+    // Task handle — explicit await
     let t = task async fetchUser(2)
-    let user2, err2 = await t
-    if err2 => print($"Task failed: {err2}")
+    let body2, err2 = await t
 
-    // Parallel collections — .par() adapter
+    // Parallel collections
     let nums = [1, 2, 3, 4, 5]
     let doubled = nums.par().map(x => x * 2)
 
-    // Data-parallel for loop with policies
+    // Data-parallel for
     for par item in items with chunk 2 threads 4 {
         process(item)
     }
 }`,
   },
   {
-    title: 'Interfaces & Polymorphism',
-    subtitle: 'Contracts, multiple interfaces, : syntax',
-    code: `// Interface — only method signatures
-Printable {
-    format(): string
-}
-
-Serializable {
-    toJSON(): string
-}
-
-// Class implementing multiple interfaces
-User : Printable, Serializable {
-    name: string
-    email: string
-
-    constructor(name: string, email: string) {
-        this.name = name
-        this.email = email
-    }
-
-    format(): string => $"{this.name} <{this.email}>"
-    toJSON(): string {
-        return $"{\\"name\\": \\"{this.name}\\"}"
-    }
-}
+    label: 'http',
+    title: 'HTTP server, batteries included',
+    code: `import { Server, Response } from "http"
 
 main() {
-    let user = User("Alice", "alice@dev.io")
-    print(user.format())    // Alice <alice@dev.io>
-    print(user.toJSON())    // {"name": "Alice"}
+    let app = Server.create()
+
+    app.get("/", (req) => Response.text("hello, world"))
+
+    app.get("/users/:id", (req) => {
+        let id = req.param("id")
+        let user, err = DB.queryOne(
+            "SELECT * FROM users WHERE id = ?", [id]
+        )
+        if err => return Response.status(404).text(err)
+        return Response.json(user)
+    })
+
+    app.post("/users", (req) => {
+        let body = req.json()
+        DB.exec("INSERT INTO users (name) VALUES (?)", [body.name])
+        return Response.status(201).json(body)
+    })
+
+    Log.info("listening on :3000")
+    app.listen(3000)
 }`,
   },
   {
-    title: 'Test Framework',
-    subtitle: 'Built-in testing with describe/test/expect',
-    code: `// Run with: livac test myfile.liva
+    label: 'tests',
+    title: 'Built-in tests',
+    code: `// run with: livac test math.liva
+import { square, clamp } from "./math"
 
-describe("Math utils") {
-    test("square calculates correctly") {
+describe("math utils") {
+    beforeEach(() => Log.debug("setup"))
+
+    test("square works") {
         expect(square(5)).toBe(25)
-        expect(square(0)).toBe(0)
         expect(square(-3)).toBe(9)
     }
 
-    test("clamp keeps value in range") {
+    test("clamp stays in range") {
         expect(clamp(150, 0, 100)).toBe(100)
         expect(clamp(-5, 0, 100)).toBe(0)
-        expect(clamp(50, 0, 100)).toBe(50)
     }
 
-    test("parseAge rejects invalid input") {
-        let age, err = parseAge("abc")
+    test("parseAge rejects garbage") {
+        let _, err = parseAge("xyz")
         expect(err).toBeTruthy()
     }
-
-    test("parseAge accepts valid input") {
-        let age, err = parseAge("25")
-        expect(err).toBeFalsy()
-        expect(age).toBe(25)
-    }
 }`,
   },
   {
-    title: 'Maps, Sets & Collections',
-    subtitle: 'Key-value maps, sets with operators, iteration',
+    label: 'rust',
+    title: 'Drop into Rust when you need to',
     code: `main() {
-    // Map — key-value collection
-    let ages = Map { "Alice": 30, "Bob": 25, "Carol": 28 }
-    let age = ages.get("Alice") or 0
-    ages.set("Dave", 35)
-    ages.delete("Bob")
-
-    for key, value in ages {
-        print($"{key} is {value} years old")
-    }
-
-    // Set — unique values, set operations
-    let frontend = Set { "React", "Vue", "Svelte" }
-    let backend = Set { "Rust", "Go", "Node" }
-    let all = frontend.union(backend)
-
-    frontend.add("Angular")
-    print($"Frontend has {frontend.size()} frameworks")
-    print($"Has React? {frontend.has("React")}")
-
-    // Array → Map aggregation
-    let words = ["hello", "world", "hello", "liva"]
-    let counts = Map {}
-    for w in words {
-        let c = counts.get(w) or 0
-        counts.set(w, c + 1)
-    }
-    print(counts.keys())   // ["hello", "world", "liva"]
-}`,
-  },
-  {
-    title: 'Rust Interop',
-    subtitle: 'Inline Rust blocks, crate dependencies',
-    code: `// Crate dependencies (top-level)
-use rust "chrono" version "0.4"
-use rust "uuid" version "1.0" features ["v4"]
-
-main() {
-    // Inline Rust — access Liva vars by snake_case name
-    let name = "Alice"
-
-    let greeting = rust {
-        // Liva's 'name' is accessible as 'name' (String)
-        format!("Hello from Rust, {}!", name)
-    }
-    print(greeting)
-
-    // Use external crates inside rust blocks
+    // Inline Rust block — typed expression
     let timestamp = rust {
         use chrono::Utc;
-        Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()
+        Utc::now().format("%H:%M:%S").to_string()
     }
-    print($"Current time: {timestamp}")
+    print($"now: {timestamp}")
+
+    // Declare a crate with version + features
+    use rust uuid version "1.6" features ["v4"]
 
     let id = rust {
         use uuid::Uuid;
         Uuid::new_v4().to_string()
     }
-    print($"Generated UUID: {id}")
-}`,
-  },
-  {
-    title: 'Logging & Config',
-    subtitle: 'Structured logging, .env config loading',
-    code: `main() {
-    // Logging — timestamped, to stderr
-    Log.info("Application started")
-    Log.warn("Cache miss", "retrying")
-    Log.error("Connection failed", "timeout=30s")
-    Log.debug("Verbose detail")  // only with --verbose
-
-    // Log level control
-    Log.setLevel("debug")
-
-    // Config — load .env files with typed getters
-    Config.load(".env")
-    let dbHost = Config.get("DB_HOST") or "localhost"
-    let dbPort = Config.getInt("DB_PORT") or 5432
-    let debug = Config.getBool("DEBUG") or false
-
-    print($"Connecting to {dbHost}:{dbPort}")
-    if debug => Log.debug("Debug mode enabled")
-
-    // Log renders Maps as tables automatically
-    let stats = Map {
-        "requests": "1024",
-        "errors": "3",
-        "uptime": "99.7%"
-    }
-    Log.info("Server stats", stats)
+    print($"id: {id}")
 }`,
   },
 ];
+
+const codeBlocks = examples.map(ex => ({
+  ...ex,
+  html: highlighter.codeToHtml(ex.code, { lang: 'liva', theme: 'github-light' }),
+}));
 ---
 
-<section id="code" class="py-24 md:py-32 bg-base-200/30">
+<section id="code" class="py-24 md:py-32 bg-[color:var(--color-paper-2)] border-b hairline">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
-        Code that speaks for itself
+    <div class="mb-12">
+      <div class="section-num mb-3">§ 02 · syntax in motion</div>
+      <h2 class="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">
+        Real Liva. Every snippet here compiles.
       </h2>
-      <p class="text-base-content/60 text-lg max-w-2xl mx-auto">
-        Real Liva code — not pseudo-code. Every example here compiles and runs.
-      </p>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6">
-      {examples.map((ex, i) => (
-        <div class={`card bg-base-100 border border-base-content/5 hover:border-primary/15 transition-colors ${i === examples.length - 1 && examples.length % 2 !== 0 ? 'md:col-span-2 md:max-w-xl md:mx-auto' : ''}`}>
-          <div class="card-body p-0">
-            <div class="px-5 py-4 border-b border-base-content/5">
-              <h3 class="font-semibold text-base-content">{ex.title}</h3>
-              <p class="text-base-content/40 text-sm mt-0.5">{ex.subtitle}</p>
-            </div>
-            <div class="p-5 text-[13px] leading-relaxed overflow-x-auto [&_pre]:!bg-transparent [&_pre]:!m-0 [&_pre]:!p-0 [&_code]:!text-[13px] [&_code]:!leading-relaxed" set:html={highlighter.codeToHtml(ex.code, { lang: 'liva', theme: 'github-dark' })} />
+    <div class="border hairline bg-[color:var(--color-paper)] overflow-hidden" data-showcase>
+      <!-- Tabs row -->
+      <div class="flex overflow-x-auto border-b hairline">
+        {codeBlocks.map((ex, i) => (
+          <button
+            type="button"
+            data-tab={i}
+            class:list={[
+              'shrink-0 px-4 py-3 font-mono-tight text-[11px] uppercase tracking-[0.15em] border-r hairline transition-colors',
+              i === 0
+                ? 'bg-[color:var(--color-ink)] text-[color:var(--color-paper)]'
+                : 'text-[color:var(--color-ink-3)] hover:text-[color:var(--color-ink)] hover:bg-[color:var(--color-paper-2)]',
+            ]}
+          >
+            {String(i + 1).padStart(2, '0')} · {ex.label}
+          </button>
+        ))}
+      </div>
+
+      <!-- Panels -->
+      {codeBlocks.map((ex, i) => (
+        <div data-panel={i} class:list={['p-6 md:p-8', i === 0 ? 'block' : 'hidden']}>
+          <div class="flex items-baseline justify-between mb-4 flex-wrap gap-2">
+            <h3 class="font-display text-2xl">{ex.title}</h3>
+            <span class="font-mono-tight text-[11px] text-[color:var(--color-ink-3)]">
+              example {String(i + 1).padStart(2, '0')} / {String(codeBlocks.length).padStart(2, '0')}
+            </span>
           </div>
+          <div class="overflow-x-auto" set:html={ex.html} />
         </div>
       ))}
     </div>
   </div>
 </section>
+
+<script>
+  const root = document.querySelector('[data-showcase]');
+  if (root) {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-tab]');
+    const panels = root.querySelectorAll<HTMLDivElement>('[data-panel]');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.tab;
+        tabs.forEach(b => {
+          const active = b.dataset.tab === idx;
+          b.classList.toggle('bg-[color:var(--color-ink)]', active);
+          b.classList.toggle('text-[color:var(--color-paper)]', active);
+          b.classList.toggle('text-[color:var(--color-ink-3)]', !active);
+        });
+        panels.forEach(p => {
+          p.classList.toggle('hidden', p.dataset.panel !== idx);
+          p.classList.toggle('block', p.dataset.panel === idx);
+        });
+      });
+    });
+  }
+</script>

@@ -1,31 +1,71 @@
 ---
+const cols = [
+  {
+    head: 'compiler',
+    links: [
+      { label: 'github', href: 'https://github.com/liva-lang/livac' },
+      { label: 'releases', href: 'https://github.com/liva-lang/livac/releases' },
+      { label: 'changelog', href: 'https://github.com/liva-lang/livac/blob/main/CHANGELOG.md' },
+      { label: 'roadmap', href: 'https://github.com/liva-lang/livac/blob/main/ROADMAP.md' },
+    ],
+  },
+  {
+    head: 'tooling',
+    links: [
+      { label: 'vscode extension', href: 'https://github.com/liva-lang/vscode-extension' },
+      { label: 'quick reference', href: 'https://github.com/liva-lang/livac/blob/main/docs/QUICK_REFERENCE.md' },
+      { label: 'error codes', href: 'https://github.com/liva-lang/livac/blob/main/docs/ERROR_CODES.md' },
+      { label: 'agent skill', href: 'https://github.com/liva-lang/livac/tree/main/skills/liva-lang' },
+    ],
+  },
+  {
+    head: 'community',
+    links: [
+      { label: 'issues', href: 'https://github.com/liva-lang/livac/issues' },
+      { label: 'discussions', href: 'https://github.com/liva-lang/livac/discussions' },
+      { label: 'license · MIT', href: 'https://github.com/liva-lang/livac/blob/main/LICENSE' },
+    ],
+  },
+];
 ---
 
-<footer class="footer footer-center p-10 border-t border-base-content/5">
-  <aside>
-    <div class="flex items-center gap-2.5">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-liva-400 to-liva-600 flex items-center justify-center font-extrabold text-white text-xs">
-        L
+<footer class="border-t hairline bg-[color:var(--color-paper-2)]">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="grid md:grid-cols-12 gap-10">
+      <!-- Brand -->
+      <div class="md:col-span-4">
+        <div class="font-mono-tight font-bold text-lg mb-3">
+          <span class="text-[color:var(--color-accent)]">~</span> liva
+          <span class="text-[color:var(--color-ink-3)] text-[11px] uppercase tracking-[0.2em] ml-1">v2.3.0</span>
+        </div>
+        <p class="text-[14px] text-[color:var(--color-ink-2)] leading-relaxed max-w-sm">
+          A modern programming language that compiles to Rust.<br/>
+          <span class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">
+            written in Liva, compiled by Liva, with love.
+          </span>
+        </p>
       </div>
-      <span class="text-sm text-base-content/60">
-        Made with care for developers who want simplicity <em>and</em> performance.
-      </span>
+
+      <!-- Link columns -->
+      {cols.map(c => (
+        <div class="md:col-span-2 lg:col-span-3">
+          <div class="eyebrow text-[color:var(--color-ink-3)] mb-4">{c.head}</div>
+          <ul class="space-y-2">
+            {c.links.map(l => (
+              <li>
+                <a href={l.href} target="_blank" rel="noopener" class="font-mono-tight text-[13px] text-[color:var(--color-ink-2)] hover:text-[color:var(--color-accent)] transition-colors link-anim">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
-  </aside>
-  <nav>
-    <div class="grid grid-flow-col gap-6 text-sm">
-      <a href="https://github.com/liva-lang/livac" target="_blank" class="link link-hover text-base-content/40">
-        Compiler
-      </a>
-      <a href="https://github.com/liva-lang/vscode-extension" target="_blank" class="link link-hover text-base-content/40">
-        VS Code Extension
-      </a>
-      <a href="https://github.com/liva-lang/livac/blob/main/docs/QUICK_REFERENCE.md" target="_blank" class="link link-hover text-base-content/40">
-        Docs
-      </a>
-      <a href="https://github.com/liva-lang/livac/blob/main/LICENSE" target="_blank" class="link link-hover text-base-content/40">
-        MIT License
-      </a>
+
+    <div class="mt-12 pt-6 border-t hairline flex flex-wrap items-center justify-between gap-3 font-mono-tight text-[11px] text-[color:var(--color-ink-3)]">
+      <span>© 2026 — released under MIT</span>
+      <span>built with astro · self-hosted compiler · no trackers</span>
     </div>
-  </nav>
+  </div>
 </footer>

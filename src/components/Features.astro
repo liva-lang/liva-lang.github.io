@@ -1,74 +1,67 @@
 ---
-const features = [
+const items = [
   {
-    icon: '⚡',
-    title: 'Native Performance',
-    description: 'Compiles to Rust, then to a native binary. No interpreter, no VM, no garbage collector. Inline rust { } blocks for full Rust ecosystem access.',
+    num: '01',
+    title: 'Compiles to Rust',
+    body: 'Liva emits real Rust source, then cargo builds a native binary. No VM, no interpreter, no garbage collector. What you ship is what you wrote — minus the boilerplate.',
+    tag: 'native',
   },
   {
-    icon: '🎯',
-    title: 'Clean Syntax',
-    description: 'Familiar syntax inspired by TypeScript and Python. Type inference, one-liner functions, string templates, and more.',
+    num: '02',
+    title: 'Clean, predictable syntax',
+    body: 'Familiar shape if you write TypeScript or Python. Type inference, one-liner arrows, string templates, point-free references, no semicolons.',
+    tag: 'ergonomics',
   },
   {
-    icon: '🛡️',
-    title: 'Safe by Default',
-    description: 'Explicit error handling with error binding — no exceptions, no null surprises. Errors are values you handle, not catch.',
+    num: '03',
+    title: 'Errors are values',
+    body: 'No exceptions, no nil surprises. fail propagates, or fail short-circuits, or <default> heals. Every fallible call returns (value, error) — you decide what to do with both.',
+    tag: 'safety',
   },
   {
-    icon: '🔀',
-    title: 'Hybrid Concurrency',
-    description: 'async for I/O, par for CPU-bound tasks. task/await for fine-grained control. Auto fire-and-forget inference. No colored functions.',
+    num: '04',
+    title: 'Hybrid concurrency',
+    body: 'async for I/O, par for CPU. task / await for fine control. Parallel-by-default collections via .par(). No coloured functions, no marathon refactors.',
+    tag: 'concurrency',
   },
   {
-    icon: '📦',
-    title: 'Batteries-included Stdlib',
-    description: 'Strings, arrays, math, file I/O, HTTP server, SQLite DB, regex, CSV, crypto, logging, config — 130+ functions, no packages needed.',
+    num: '05',
+    title: 'Batteries actually included',
+    body: 'HTTP server, SQLite, Regex, CSV, crypto, logging, .env config, date, random, process — built-in. 130+ functions you can call today without npm install.',
+    tag: 'stdlib',
   },
   {
-    icon: '🧩',
-    title: 'Full IDE Support',
-    description: 'VS Code extension with LSP: autocompletion, go to definition, hover types, real-time diagnostics, and 300+ snippets.',
-  },
-  {
-    icon: '🔁',
-    title: 'Self-hosted Compiler',
-    description: 'The Liva compiler is written in Liva. Three-generation bootstrap is idempotent and verified on CI for every release.',
-  },
-  {
-    icon: '🧪',
-    title: 'Built-in Testing',
-    description: 'Jest-style describe / test / expect with beforeEach / afterEach. Run with livac test, get coverage with --coverage.',
-  },
-  {
-    icon: '💻',
-    title: 'Modern Tooling',
-    description: 'livac fmt, lint (W001-W004), bench, doc, and an interactive REPL — all shipped in a single binary.',
+    num: '06',
+    title: 'Self-hosted, tested, tooled',
+    body: 'The compiler is written in Liva — three-generation bootstrap verified on every CI run. Jest-style tests, livac bench, livac doc, an interactive REPL, and full LSP for VS Code.',
+    tag: 'meta',
   },
 ];
 ---
 
-<section id="features" class="py-24 md:py-32">
+<section id="why" class="py-24 md:py-32 border-b hairline">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
-        Everything you need, nothing you don't
-      </h2>
-      <p class="text-base-content/60 text-lg max-w-2xl mx-auto">
-        Liva gives you modern language features that compile to efficient, safe Rust code.
-      </p>
+    <div class="flex items-baseline justify-between mb-16 flex-wrap gap-4">
+      <div>
+        <div class="section-num mb-3">§ 01 · principles</div>
+        <h2 class="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
+          Built for people who'd rather <span class="italic font-serif">read</span> code than fight it.
+        </h2>
+      </div>
+      <a href="#code" class="font-mono-tight text-sm link-anim text-[color:var(--color-ink-2)] hover:text-[color:var(--color-ink)] mt-2">show me code →</a>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {features.map((f) => (
-        <div class="card bg-base-200/50 border border-base-content/5 hover:border-primary/20 transition-all duration-300">
-          <div class="card-body">
-            <div class="text-3xl mb-2">{f.icon}</div>
-            <h3 class="card-title text-base-content">{f.title}</h3>
-            <p class="text-base-content/60 text-sm leading-relaxed">{f.description}</p>
+    <ol class="grid sm:grid-cols-2 lg:grid-cols-3 border-l border-t hairline">
+      {items.map(it => (
+        <li class="border-r border-b hairline p-7 group hover:bg-[color:var(--color-paper-2)] transition-colors">
+          <div class="flex items-baseline justify-between mb-5">
+            <span class="font-mono-tight text-[11px] text-[color:var(--color-ink-3)] tracking-wider">{it.num}</span>
+            <span class="font-mono-tight text-[10px] uppercase tracking-[0.18em] text-[color:var(--color-accent)]">{it.tag}</span>
           </div>
-        </div>
+          <h3 class="font-display text-xl mb-3 leading-snug">{it.title}</h3>
+          <p class="text-[15px] leading-relaxed text-[color:var(--color-ink-2)]">{it.body}</p>
+        </li>
       ))}
-    </div>
+    </ol>
   </div>
 </section>

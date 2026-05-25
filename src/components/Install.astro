@@ -1,125 +1,142 @@
 ---
 const tabs = [
   {
-    id: 'debian',
+    key: 'linux',
     label: 'Linux',
-    icon: '🐧',
-    commands: [
-      'curl -LO https://github.com/liva-lang/livac/releases/latest/download/livac_amd64.deb',
-      'sudo dpkg -i livac_amd64.deb',
-      'livac --version',
-    ],
+    sub: '.deb · amd64',
+    cmd: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac_amd64.deb -o livac.deb
+sudo dpkg -i livac.deb`,
+    out: `livac --version
+liva 2.3.0 (x86_64-unknown-linux-gnu)`,
   },
   {
-    id: 'mac',
+    key: 'macos',
     label: 'macOS',
-    icon: '🍎',
-    commands: [
-      '# Apple Silicon (M1/M2/M3/M4)',
-      'curl -L https://github.com/liva-lang/livac/releases/latest/download/livac-darwin-arm64.tar.gz | tar xz',
-      'sudo mv livac /usr/local/bin/',
-      'livac --version',
-    ],
+    sub: 'arm64 · Apple Silicon',
+    cmd: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac-macos-arm64.tar.gz | tar xz
+sudo mv livac /usr/local/bin/`,
+    out: `livac --version
+liva 2.3.0 (aarch64-apple-darwin)`,
   },
   {
-    id: 'windows',
+    key: 'windows',
     label: 'Windows',
-    icon: '🪟',
-    commands: [
-      '# Download the .zip from GitHub Releases',
-      'Invoke-WebRequest -Uri https://github.com/liva-lang/livac/releases/latest/download/livac-windows-x86_64.zip -OutFile livac.zip',
-      'Expand-Archive livac.zip -DestinationPath C:\\livac',
-      '# Add C:\\livac to your PATH',
-      'livac --version',
-    ],
+    sub: 'x64 · zip',
+    cmd: `Invoke-WebRequest \`
+  -Uri https://github.com/liva-lang/livac/releases/latest/download/livac-windows-x64.zip \`
+  -OutFile livac.zip
+Expand-Archive livac.zip C:\\livac`,
+    out: `livac --version
+liva 2.3.0 (x86_64-pc-windows-msvc)`,
   },
   {
-    id: 'source',
-    label: 'Source',
-    icon: '🔧',
-    commands: [
-      'git clone https://github.com/liva-lang/livac.git',
-      'cd livac && cargo build --release',
-      'cargo install --path .',
-      'livac --version',
-    ],
+    key: 'source',
+    label: 'From source',
+    sub: 'cargo · any platform',
+    cmd: `git clone https://github.com/liva-lang/livac
+cd livac
+cargo build --release
+sudo cp target/release/livac /usr/local/bin/`,
+    out: `livac --version
+liva 2.3.0 (built from source)`,
   },
 ];
 ---
 
-<section id="install" class="py-24 md:py-32 bg-base-200/30">
-  <div class="max-w-4xl mx-auto px-6">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
-        Get started in seconds
+<section id="install" class="py-24 md:py-32 border-b hairline">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="mb-12">
+      <div class="section-num mb-3">§ 05 · install</div>
+      <h2 class="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">
+        Three commands.<br/>A native compiler on your $PATH.
       </h2>
-      <p class="text-base-content/60 text-lg">
-        Pre-built binaries for Linux, macOS, and Windows. Or build from source.
-      </p>
     </div>
 
-    <!-- Tab buttons -->
-    <div class="flex justify-center mb-6">
-      <div role="tablist" class="tabs tabs-box bg-base-200 border border-base-content/5">
-        {tabs.map((tab, i) => (
+    <div class="grid md:grid-cols-12 gap-8 items-start" data-install>
+      <!-- Sidebar tabs -->
+      <div class="md:col-span-3 flex md:flex-col gap-px md:border md:hairline">
+        {tabs.map((t, i) => (
           <button
-            role="tab"
-            class={`tab gap-2 ${i === 0 ? 'tab-active' : ''}`}
-            data-tab={tab.id}
-            onclick={`
-              document.querySelectorAll('[role=tabpanel]').forEach(p => p.classList.add('hidden'));
-              document.getElementById('panel-${tab.id}').classList.remove('hidden');
-              this.closest('[role=tablist]').querySelectorAll('[role=tab]').forEach(t => t.classList.remove('tab-active'));
-              this.classList.add('tab-active');
-            `}
+            type="button"
+            data-tab={t.key}
+            class:list={[
+              'flex-1 md:flex-none text-left px-4 py-3 transition-colors border hairline md:border-0 md:border-b last:md:border-b-0',
+              i === 0
+                ? 'bg-[color:var(--color-ink)] text-[color:var(--color-paper)]'
+                : 'bg-[color:var(--color-paper-2)] hover:bg-[color:var(--color-paper-3)]',
+            ]}
           >
-            <span>{tab.icon}</span>
-            <span class="hidden sm:inline">{tab.label}</span>
+            <div class="font-mono-tight text-[13px] font-medium">{t.label}</div>
+            <div class:list={[
+              'font-mono-tight text-[10px] uppercase tracking-[0.15em] mt-0.5',
+              i === 0 ? 'text-[color:var(--color-paper)]/60' : 'text-[color:var(--color-ink-3)]',
+            ]}>{t.sub}</div>
           </button>
         ))}
       </div>
-    </div>
 
-    <!-- Tab panels -->
-    {tabs.map((tab, i) => (
-      <div role="tabpanel" id={`panel-${tab.id}`} class={i !== 0 ? 'hidden' : ''}>
-        <div class="mockup-code bg-base-200 border border-base-content/5">
-          {tab.commands.map(cmd =>
-            cmd.startsWith('#')
-              ? <pre data-prefix=""><code class="text-base-content/40">{cmd}</code></pre>
-              : <pre data-prefix="$"><code>{cmd}</code></pre>
-          )}
+      <!-- Content -->
+      <div class="md:col-span-9 space-y-4">
+        {tabs.map((t, i) => (
+          <div data-panel={t.key} class:list={[i === 0 ? 'block' : 'hidden', 'space-y-4']}>
+            <!-- Command block -->
+            <div class="border hairline bg-[color:var(--color-ink)] text-[color:var(--color-paper)] font-mono-tight text-[13px] overflow-hidden">
+              <div class="flex items-center justify-between px-4 py-2 border-b border-[color:var(--color-paper)]/15">
+                <span class="text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-paper)]/50">terminal</span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-accent-soft)]">{t.label}</span>
+              </div>
+              <pre class="p-4 overflow-x-auto leading-relaxed"><code>{t.cmd.split('\n').map(line => (
+                <span class="block"><span class="text-[color:var(--color-accent-soft)]">$ </span>{line}</span>
+              ))}</code></pre>
+            </div>
+
+            <!-- Verify -->
+            <div class="border hairline bg-[color:var(--color-paper-2)] font-mono-tight text-[13px] overflow-hidden">
+              <div class="px-4 py-2 border-b hairline text-[10px] uppercase tracking-[0.2em] text-[color:var(--color-ink-3)]">verify</div>
+              <pre class="p-4 overflow-x-auto leading-relaxed text-[color:var(--color-ink-2)]"><code>{t.out.split('\n').map((line, j) => (
+                <span class="block">{j === 0 ? <><span class="text-[color:var(--color-accent)]">$ </span>{line}</> : line}</span>
+              ))}</code></pre>
+            </div>
+          </div>
+        ))}
+
+        <!-- Next steps -->
+        <div class="pt-4 grid sm:grid-cols-2 gap-4">
+          <a href="https://github.com/liva-lang/livac#quick-start" target="_blank" rel="noopener" class="block border hairline p-5 hover:border-[color:var(--color-ink)] transition-colors group">
+            <div class="eyebrow text-[color:var(--color-accent)] mb-2">→ next</div>
+            <div class="font-display text-lg mb-1">Quick start</div>
+            <div class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">livac init my-app && cd my-app && livac run</div>
+          </a>
+          <a href="https://marketplace.visualstudio.com/items?itemName=liva.liva-vscode" target="_blank" rel="noopener" class="block border hairline p-5 hover:border-[color:var(--color-ink)] transition-colors">
+            <div class="eyebrow text-[color:var(--color-accent)] mb-2">→ editor</div>
+            <div class="font-display text-lg mb-1">VS Code extension</div>
+            <div class="font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">syntax · 300 snippets · LSP</div>
+          </a>
         </div>
       </div>
-    ))}
-
-    <!-- Quick start after install -->
-    <div class="mt-12 text-center">
-      <p class="text-base-content/60 mb-4">Then write your first program:</p>
-      <div class="max-w-md mx-auto mockup-code bg-base-200 border border-base-content/5">
-        <pre data-prefix=""><code class="text-base-content/40"># hello.liva</code></pre>
-        <pre data-prefix=" "><code>main() =&gt; print("Hello, Liva!")</code></pre>
-        <pre data-prefix="$"><code>livac run hello.liva</code></pre>
-        <pre data-prefix="" class="text-success"><code>Hello, Liva!</code></pre>
-      </div>
-    </div>
-
-    <!-- Links -->
-    <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a
-        href="https://github.com/liva-lang/livac/releases/latest"
-        target="_blank"
-        class="btn btn-primary shadow-lg shadow-primary/25"
-      >
-        Download Latest Release
-      </a>
-      <a
-        href="https://github.com/liva-lang/livac/blob/main/docs/QUICK_REFERENCE.md"
-        target="_blank"
-        class="btn btn-ghost border border-base-content/10"
-      >
-        Read the Docs
-      </a>
     </div>
   </div>
 </section>
+
+<script>
+  const root = document.querySelector('[data-install]');
+  if (root) {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-tab]');
+    const panels = root.querySelectorAll<HTMLDivElement>('[data-panel]');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.tab;
+        tabs.forEach(b => {
+          const active = b.dataset.tab === key;
+          b.classList.toggle('bg-[color:var(--color-ink)]', active);
+          b.classList.toggle('text-[color:var(--color-paper)]', active);
+          b.classList.toggle('bg-[color:var(--color-paper-2)]', !active);
+        });
+        panels.forEach(p => {
+          p.classList.toggle('hidden', p.dataset.panel !== key);
+          p.classList.toggle('block', p.dataset.panel === key);
+        });
+      });
+    });
+  }
+</script>
