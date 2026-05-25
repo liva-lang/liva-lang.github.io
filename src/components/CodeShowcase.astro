@@ -219,27 +219,28 @@ main() {
     title: 'Built-in tests',
     code: `// run with:  livac test
 // file:       math.test.liva
+import { describe, test, beforeEach, afterEach, expect } from "liva/test"
 import { square, clamp, parseAge } from "./math"
 
-describe("math utils") {
+describe("math utils", () => {
     beforeEach(() => Log.debug("setup"))
     afterEach(() => Log.debug("teardown"))
 
-    test("square works") {
+    test("square works", () => {
         expect(square(5)).toBe(25)
         expect(square(-3)).toBe(9)
-    }
+    })
 
-    test("clamp stays in range") {
+    test("clamp stays in range", () => {
         expect(clamp(150, 0, 100)).toBe(100)
         expect(clamp(-5, 0, 100)).toBe(0)
-    }
+    })
 
-    test("parseAge rejects garbage") {
+    test("parseAge rejects garbage", () => {
         let _, err = parseAge("xyz")
         expect(err).toBeTruthy()
-    }
-}`,
+    })
+})`,
   },
   {
     label: 'rust',
