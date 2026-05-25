@@ -1,0 +1,171 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const phases = [
+  {
+    range: 'v1.4 — v1.9',
+    status: 'shipped',
+    title: 'Standard library + dogfooding',
+    notes: [
+      'String/Array/Math expanded (P0).',
+      '`rust { }` interop, structured logging, dotenv-style config, `livac init`.',
+      'File, Dir, Date, Regex, CSV (P1).',
+      'Random, Crypto, Process, HTTP server (P2).',
+      'SQLite-backed DB + linter (W001–W004).',
+      'Seven dogfooding bugs surfaced and fixed by building a real REST API.',
+    ],
+  },
+  {
+    range: 'v2.0',
+    status: 'shipped',
+    title: 'Self-hosting',
+    notes: [
+      'gen-1 → gen-2 → gen-3 build is idempotent.',
+      'Recursive enums with automatic boxing.',
+      'Phase 12 release gate enforces byte-identical re-builds.',
+    ],
+  },
+  {
+    range: 'v2.1 — v2.3',
+    status: 'shipped',
+    title: 'Tooling completion',
+    notes: [
+      'Workspace split: frozen `bootstrap/` (Rust gen-0) vs canonical `compiler/` (Liva).',
+      'YAML/TOML stdlib.',
+      '`livac repl`, `livac doc`, `livac bench`, `livac test --coverage`.',
+      'Jest-style `beforeEach` / `afterEach` lifecycle hooks.',
+      'Lazy iterator chain fusion — `filter().map().take()` collapses to one pipeline.',
+      '`LIVA_STRICT` env var, CI bench gate, reproducible bootstrap seed.',
+    ],
+  },
+  {
+    range: 'v2.4',
+    status: 'in-progress',
+    title: 'Language polish (next)',
+    notes: [
+      'Optional chaining `obj?.field?.method()` — desugars cleanly to `.as_ref().and_then(...)`.',
+      'Null coalescing `??` to complement `or default`.',
+      'Pattern matching guards: `case Foo(x) if x > 10`.',
+      'Linter rules W005 (unused function), W006 (var should be const), W007 (dead private field).',
+      'Parser error recovery — collect multiple diagnostics before aborting.',
+    ],
+  },
+  {
+    range: 'v3.0',
+    status: 'planned',
+    title: 'Generics maturity + package manager',
+    notes: [
+      'Trait bounds on generic parameters, default methods, associated types.',
+      '`liva.toml` manifest and `livac install` with a public registry.',
+      'Module re-exports and proper namespaces.',
+      'Resolve B112 (defer + mutable borrow conflict) — defer redesign.',
+    ],
+  },
+  {
+    range: 'v3.x',
+    status: 'planned',
+    title: 'Tooling depth',
+    notes: [
+      'Debugger via DAP — VS Code extension wires `Liva: Debug` to it.',
+      'Built-in profiler (`livac profile`) with JSON + flamegraph output.',
+      'Coverage HTML report alongside the current `cargo-llvm-cov` text.',
+      'LSP: Go to Implementation, Call Hierarchy, hover-type-of-expression.',
+      'Inlay hints + CodeLens (Run / Run Test / Bench) in the editor.',
+      'Test Explorer UI integration (gutter ✓ / ✗).',
+    ],
+  },
+  {
+    range: 'beyond',
+    status: 'exploratory',
+    title: 'Concurrency, macros, playground',
+    notes: [
+      'Structured concurrency: cancellation tokens, scoped tasks, native timeouts.',
+      'Procedural and declarative macros — beyond `rust { proc_macro }` workarounds.',
+      'WASM build of the compiler → in-browser playground at `/playground`.',
+    ],
+  },
+];
+
+const statusStyles = {
+  shipped: 'text-[color:var(--color-leaf)] border-[color:var(--color-leaf)]',
+  'in-progress': 'text-[color:var(--color-accent)] border-[color:var(--color-accent)]',
+  planned: 'text-[color:var(--color-sky)] border-[color:var(--color-sky)]',
+  exploratory: 'text-[color:var(--color-ink-3)] border-[color:var(--color-ink-3)]',
+} as const;
+
+const statusLabels = {
+  shipped: '✓ shipped',
+  'in-progress': '◐ in progress',
+  planned: '○ planned',
+  exploratory: '~ exploratory',
+} as const;
+---
+
+<Layout title="Roadmap — Liva" description="Where Liva is going.">
+  <Nav />
+  <main class="border-b hairline">
+    <section class="py-20 md:py-28 border-b hairline">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="section-num mb-3">§ · roadmap</div>
+        <h1 class="font-display text-4xl md:text-5xl leading-tight tracking-tight">
+          Shipped, in progress,<br/>and what's next.
+        </h1>
+        <p class="mt-4 text-[color:var(--color-ink-2)] max-w-2xl">
+          Liva ships often. Each phase is small enough to land in weeks, and big enough to
+          unlock a meaningful capability. The detail-level plan lives in
+          <a
+            href="https://github.com/liva-lang/livac/blob/main/ROADMAP.md"
+            class="link-anim text-[color:var(--color-accent)]"
+            target="_blank"
+            rel="noopener"
+          >ROADMAP.md on GitHub</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20">
+      <div class="max-w-4xl mx-auto px-6 space-y-10">
+        {phases.map(p => (
+          <article class="grid md:grid-cols-12 gap-6 md:gap-10 border-b hairline pb-10 last:border-b-0">
+            <header class="md:col-span-3 flex flex-col items-start gap-2">
+              <div class="font-mono-tight text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-ink-3)]">
+                {p.range}
+              </div>
+              <span class={`font-mono-tight text-[11px] px-2 py-0.5 border ${statusStyles[p.status]}`}>
+                {statusLabels[p.status]}
+              </span>
+            </header>
+            <div class="md:col-span-9">
+              <h2 class="font-display text-2xl md:text-3xl tracking-tight leading-tight">
+                {p.title}
+              </h2>
+              <ul class="mt-4 space-y-2 text-[15px] text-[color:var(--color-ink-2)]">
+                {p.notes.map(n => (
+                  <li class="flex gap-3">
+                    <span class="text-[color:var(--color-accent)] font-mono-tight select-none">›</span>
+                    <span set:html={n
+                      .replaceAll(/`([^`]+)`/g, '<code class="font-mono-tight text-[13px] text-[color:var(--color-ink)] bg-[color:var(--color-paper-2)] px-1.5 py-0.5">$1</code>')
+                    } />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))}
+
+        <div class="pt-4 text-center font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">
+          want to shape what's next? →
+          <a
+            href="https://github.com/liva-lang/livac/discussions"
+            class="link-anim text-[color:var(--color-accent)] ml-1"
+            target="_blank"
+            rel="noopener"
+          >open a discussion</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
