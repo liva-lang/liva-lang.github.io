@@ -1,0 +1,179 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const releases = [
+  {
+    version: '2.3.0',
+    date: '2026-05-21',
+    title: 'Tooling completion',
+    headline: 'REPL, doc generator, bench runner, coverage, Jest hooks.',
+    bullets: [
+      '`livac repl` — interactive read-eval-print loop powered by rustyline.',
+      '`livac doc` — Markdown reference generated from `///` doc-comments.',
+      '`livac bench` — runs `bench_*` functions and prints one `BENCH … ms` line each.',
+      '`livac test --coverage` — wraps the run with `cargo-llvm-cov` for line/branch coverage.',
+      'Jest-style `beforeEach` / `afterEach` (plus `beforeAll` / `afterAll`) on `describe()` blocks.',
+      'Lazy iterator chain fusion — `filter().map().take(n)` collapses to one allocation-free pipeline.',
+      '`LIVA_STRICT=1` env var to tighten the codegen prelude.',
+      'Bench gate in CI; reproducible bootstrap seed committed at `bootstrap/seed/livac-linux-amd64`.',
+    ],
+  },
+  {
+    version: '2.2.0',
+    date: '2026-05-20',
+    title: 'YAML/TOML stdlib + JSON .length fix',
+    headline: 'Configuration formats land in the stdlib.',
+    bullets: [
+      '`YAML.parse` / `YAML.stringify` for YAML 1.2 documents.',
+      '`TOML.parse` / `TOML.stringify` for the popular config format.',
+      '`JSON Value.length` now matches array/object/string semantics consistently.',
+    ],
+  },
+  {
+    version: '2.1.0',
+    date: '2026-05-20',
+    title: 'Phase F — workspace split + self-hosted tooling',
+    headline: 'Compiler crate splits cleanly between bootstrap and the canonical Liva sources.',
+    bullets: [
+      'Workspace cargo split: `bootstrap/` (frozen Rust gen-0) vs `compiler/` (Liva gen-2).',
+      'Self-hosted `livac fmt` and `livac lint` rewritten in Liva.',
+      'CLI subcommand dispatcher rewritten in Liva.',
+      'Probe `tests/regression/` suite green across both crates.',
+    ],
+  },
+  {
+    version: '2.0.0',
+    date: '2026-05-04',
+    title: 'Self-hosting milestone',
+    headline: 'gen-1 → gen-2 → gen-3 build idempotent — the compiler compiles itself end-to-end.',
+    bullets: [
+      'Phase 12 release gate: identical output across three self-hosted generations.',
+      'Recursive enums auto-boxed by codegen (no manual indirection).',
+      '`Map<K, V>` and `Set<T>` first-class with literal syntax.',
+      'Error trace chaining: every fallible call carries source position.',
+    ],
+  },
+  {
+    version: '1.9.0',
+    date: '2026-03-23',
+    title: 'Dogfooding — full REST API on top of the language',
+    headline: 'Seven bugs uncovered and squashed by writing a real CRUD service in Liva.',
+    bullets: [
+      'HTTP server (axum-backed): `Server.create`, `app.get/post/put/delete`, `app.listen`.',
+      '`Response` helpers — `text`, `json`, `status`.',
+      'SQLite-backed `DB.open/exec/query/close` (rusqlite bundled).',
+      'Logging module: `Log.info/warn/error/debug` with variadic args + table renderer.',
+    ],
+  },
+  {
+    version: '1.8.0',
+    date: '2026-03-23',
+    title: 'DB + Linter',
+    headline: 'Persistent storage and a built-in linter.',
+    bullets: [
+      'SQLite module with parameterized queries.',
+      '`livac lint` — W001 (unused var), W002 (unused import), W003 (unreachable), W004 (always true/false).',
+    ],
+  },
+  {
+    version: '1.7.0',
+    date: '2026-03-22',
+    title: 'Stdlib P2 + HTTP server',
+    headline: 'Random, Crypto, Process — and a real web server.',
+    bullets: [
+      '`Random` (5 functions), `Crypto` (4 functions), `Process` (4 functions).',
+      'HTTP server module — routes, params, responses, content types.',
+    ],
+  },
+  {
+    version: '1.6.0',
+    date: '2026-03-20',
+    title: 'Stdlib P1',
+    headline: 'File / Dir / Regex / Date / CSV.',
+    bullets: [
+      'File (11 functions), Dir (7), Regex (5), Date (14), CSV (8).',
+    ],
+  },
+  {
+    version: '1.5.0',
+    date: '2026-03-20',
+    title: 'rust { } interop + Logging + Config + `livac init`',
+    headline: 'Embed Rust freely, structured logs, dotenv-style config, scaffolded projects.',
+    bullets: [
+      'Inline `rust { ... }` blocks compile straight through.',
+      '`use rust crate@version features [...]` for dependencies.',
+      '`Config.load/get/getInt/getBool/getAll` over `.env` files.',
+      '`livac init` scaffolds a runnable project in one command.',
+    ],
+  },
+];
+---
+
+<Layout title="Changelog — Liva" description="Release history for the Liva compiler.">
+  <Nav />
+  <main class="border-b hairline">
+    <section class="py-20 md:py-28 border-b hairline">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="section-num mb-3">§ · changelog</div>
+        <h1 class="font-display text-4xl md:text-5xl leading-tight tracking-tight">
+          Every version, one screen.
+        </h1>
+        <p class="mt-4 text-[color:var(--color-ink-2)] max-w-2xl">
+          Headline notes for each release. The full history — including dev cycles,
+          bug fixes, and refactors — lives in <a
+            href="https://github.com/liva-lang/livac/blob/main/CHANGELOG.md"
+            class="link-anim text-[color:var(--color-accent)]"
+            target="_blank"
+            rel="noopener"
+          >CHANGELOG.md on GitHub</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20">
+      <div class="max-w-4xl mx-auto px-6 space-y-12">
+        {releases.map((r, i) => (
+          <article class="grid md:grid-cols-12 gap-6 md:gap-10 border-b hairline pb-12 last:border-b-0">
+            <header class="md:col-span-3">
+              <div class="font-mono-tight text-[11px] text-[color:var(--color-ink-3)] uppercase tracking-[0.2em]">
+                v{r.version}
+              </div>
+              <div class="font-mono-tight text-[12px] text-[color:var(--color-ink-2)] mt-1">
+                {r.date}
+              </div>
+            </header>
+            <div class="md:col-span-9">
+              <h2 class="font-display text-2xl md:text-3xl tracking-tight leading-tight">
+                {r.title}
+              </h2>
+              <p class="mt-3 text-[color:var(--color-ink-2)]">{r.headline}</p>
+              <ul class="mt-5 space-y-2 text-[15px] text-[color:var(--color-ink-2)]">
+                {r.bullets.map(b => (
+                  <li class="flex gap-3">
+                    <span class="text-[color:var(--color-accent)] font-mono-tight select-none">›</span>
+                    <span set:html={b
+                      .replaceAll(/`([^`]+)`/g, '<code class="font-mono-tight text-[13px] text-[color:var(--color-ink)] bg-[color:var(--color-paper-2)] px-1.5 py-0.5">$1</code>')
+                    } />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))}
+
+        <div class="pt-4 text-center font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">
+          everything older →
+          <a
+            href="https://github.com/liva-lang/livac/blob/main/CHANGELOG.md"
+            class="link-anim text-[color:var(--color-accent)] ml-1"
+            target="_blank"
+            rel="noopener"
+          >CHANGELOG.md</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
