@@ -1,28 +1,32 @@
 ---
 const cols = [
   {
-    head: 'compiler',
+    head: 'project',
     links: [
-      { label: 'github', href: 'https://github.com/liva-lang/livac' },
-      { label: 'releases', href: 'https://github.com/liva-lang/livac/releases' },
-      { label: 'changelog', href: 'https://github.com/liva-lang/livac/blob/main/CHANGELOG.md' },
-      { label: 'roadmap', href: 'https://github.com/liva-lang/livac/blob/main/ROADMAP.md' },
+      { label: 'install', href: '/install', external: false },
+      { label: 'docs', href: '/docs', external: false },
+      { label: 'examples', href: '/examples', external: false },
+      { label: 'benchmarks', href: '/benchmarks', external: false },
+      { label: 'changelog', href: '/changelog', external: false },
+      { label: 'roadmap', href: '/roadmap', external: false },
     ],
   },
   {
-    head: 'tooling',
+    head: 'source',
     links: [
+      { label: 'livac compiler', href: 'https://github.com/liva-lang/livac' },
       { label: 'vscode extension', href: 'https://github.com/liva-lang/vscode-extension' },
-      { label: 'quick reference', href: 'https://github.com/liva-lang/livac/blob/main/docs/QUICK_REFERENCE.md' },
-      { label: 'error codes', href: 'https://github.com/liva-lang/livac/blob/main/docs/ERROR_CODES.md' },
+      { label: 'website', href: 'https://github.com/liva-lang/liva-lang.github.io' },
+      { label: 'releases', href: 'https://github.com/liva-lang/livac/releases' },
       { label: 'agent skill', href: 'https://github.com/liva-lang/livac/tree/main/skills/liva-lang' },
     ],
   },
   {
     head: 'community',
     links: [
-      { label: 'issues', href: 'https://github.com/liva-lang/livac/issues' },
       { label: 'discussions', href: 'https://github.com/liva-lang/livac/discussions' },
+      { label: 'issues', href: 'https://github.com/liva-lang/livac/issues' },
+      { label: 'security', href: 'https://github.com/liva-lang/livac/security/advisories' },
       { label: 'license · MIT', href: 'https://github.com/liva-lang/livac/blob/main/LICENSE' },
     ],
   },
@@ -53,7 +57,12 @@ const cols = [
           <ul class="space-y-2">
             {c.links.map(l => (
               <li>
-                <a href={l.href} target="_blank" rel="noopener" class="font-mono-tight text-[13px] text-[color:var(--color-ink-2)] hover:text-[color:var(--color-accent)] transition-colors link-anim">
+                <a
+                  href={l.href}
+                  target={l.external === false ? undefined : '_blank'}
+                  rel={l.external === false ? undefined : 'noopener'}
+                  class="font-mono-tight text-[13px] text-[color:var(--color-ink-2)] hover:text-[color:var(--color-accent)] transition-colors link-anim"
+                >
                   {l.label}
                 </a>
               </li>

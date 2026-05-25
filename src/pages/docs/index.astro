@@ -1,0 +1,143 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const REPO = 'https://github.com/liva-lang/livac/blob/main';
+
+const sections = [
+  {
+    title: 'Getting started',
+    eyebrow: '01',
+    items: [
+      { label: 'Quick start', href: `${REPO}/docs/getting-started/quick-start.md`, sub: 'install → first program in 5 minutes' },
+      { label: 'Quick reference', href: `${REPO}/docs/QUICK_REFERENCE.md`, sub: 'the language at a glance' },
+      { label: 'Troubleshooting', href: `${REPO}/docs/TROUBLESHOOTING.md`, sub: 'common errors, decoded' },
+      { label: 'Project structure', href: `${REPO}/docs/PROJECT_STRUCTURE.md`, sub: 'how a Liva crate is laid out' },
+    ],
+  },
+  {
+    title: 'Language reference',
+    eyebrow: '02',
+    items: [
+      { label: 'Syntax overview', href: `${REPO}/docs/language-reference/syntax-overview.md`, sub: 'keywords, operators, literals' },
+      { label: 'Variables & types', href: `${REPO}/docs/language-reference/variables.md`, sub: 'inference, type aliases, unions' },
+      { label: 'Control flow', href: `${REPO}/docs/language-reference/control-flow.md`, sub: '`if`, `switch`, `for`, `=>`' },
+      { label: 'Classes & interfaces', href: `${REPO}/docs/language-reference/classes-interfaces.md`, sub: 'data, methods, `_`-privacy, `extend`' },
+      { label: 'Enums & pattern matching', href: `${REPO}/docs/language-reference/enums.md`, sub: 'sum types, recursive auto-boxing' },
+      { label: 'Collections', href: `${REPO}/docs/language-reference/collections.md`, sub: 'arrays, `Map<K,V>`, `Set<T>`' },
+      { label: 'Error handling', href: `${REPO}/docs/ERROR_HANDLING_GUIDE.md`, sub: '`fail`, `(val, err)`, `or fail`, `or default`' },
+      { label: 'Concurrency', href: `${REPO}/docs/language-reference/concurrency.md`, sub: '`async`, `par`, `task`, `await`' },
+    ],
+  },
+  {
+    title: 'Standard library',
+    eyebrow: '03',
+    items: [
+      { label: 'String', href: `${REPO}/docs/language-reference/stdlib/string.md`, sub: '28 methods' },
+      { label: 'Array', href: `${REPO}/docs/language-reference/stdlib/array.md`, sub: '31 methods' },
+      { label: 'Math', href: `${REPO}/docs/language-reference/stdlib/math.md`, sub: '14 functions' },
+      { label: 'File / Dir', href: `${REPO}/docs/language-reference/stdlib/file-dir.md`, sub: 'I/O primitives' },
+      { label: 'HTTP server', href: `${REPO}/docs/language-reference/stdlib/http.md`, sub: 'axum-backed' },
+      { label: 'DB (SQLite)', href: `${REPO}/docs/language-reference/stdlib/db.md`, sub: '`open`/`exec`/`query`/`close`' },
+      { label: 'Crypto', href: `${REPO}/docs/language-reference/stdlib/crypto.md`, sub: 'sha256, md5, base64' },
+      { label: 'Date / Regex / CSV', href: `${REPO}/docs/language-reference/stdlib/date.md`, sub: 'P1 modules' },
+    ],
+  },
+  {
+    title: 'Guides',
+    eyebrow: '04',
+    items: [
+      { label: 'CLI tools', href: `${REPO}/docs/guides/cli-tools.md`, sub: '`repl`, `doc`, `bench`, `test --coverage`, Jest API' },
+      { label: 'Lazy iterators', href: `${REPO}/docs/guides/lazy-iterators.md`, sub: '`filter().map().take()` fusion' },
+      { label: 'Generics quick start', href: `${REPO}/docs/guides/generics-quick-start.md`, sub: 'parametric types in practice' },
+      { label: 'Trait aliases', href: `${REPO}/docs/guides/trait-aliases-guide.md`, sub: 'reusable constraints' },
+      { label: 'JSON typed parsing', href: `${REPO}/docs/guides/json-typed-parsing.md`, sub: 'type-safe parsing patterns' },
+      { label: 'Module best practices', href: `${REPO}/docs/guides/module-best-practices.md`, sub: 'organising larger projects' },
+      { label: 'Style guide', href: `${REPO}/docs/guides/style-guide.md`, sub: 'naming, layout, idioms' },
+      { label: 'Tuples', href: `${REPO}/docs/guides/tuples.md`, sub: 'pairs, destructuring, return values' },
+    ],
+  },
+  {
+    title: 'Editor & tooling',
+    eyebrow: '05',
+    items: [
+      { label: 'LSP user guide', href: `${REPO}/docs/lsp/LSP_USER_GUIDE.md`, sub: 'enabling the language server' },
+      { label: 'LSP API', href: `${REPO}/docs/lsp/LSP_API.md`, sub: 'requests & responses' },
+      { label: 'LSP design', href: `${REPO}/docs/lsp/LSP_DESIGN.md`, sub: 'architecture notes' },
+      { label: 'VS Code extension', href: 'https://github.com/liva-lang/vscode-extension', sub: 'syntax, snippets, commands' },
+    ],
+  },
+  {
+    title: 'Reference',
+    eyebrow: '06',
+    items: [
+      { label: 'Error codes', href: `${REPO}/docs/ERROR_CODES.md`, sub: 'full E-code catalogue' },
+      { label: 'Changelog', href: '/changelog', sub: 'release headlines' },
+      { label: 'Roadmap', href: '/roadmap', sub: 'shipped & planned' },
+      { label: 'Compiler internals', href: `${REPO}/docs/compiler-internals/`, sub: 'parser, IR, codegen' },
+    ],
+  },
+];
+---
+
+<Layout title="Docs — Liva" description="The Liva documentation hub.">
+  <Nav />
+  <main class="border-b hairline">
+    <section class="py-20 md:py-28 border-b hairline">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="section-num mb-3">§ · docs</div>
+        <h1 class="font-display text-4xl md:text-5xl leading-tight tracking-tight">
+          Read it from start to finish,<br/>or jump to what you need.
+        </h1>
+        <p class="mt-4 text-[color:var(--color-ink-2)] max-w-2xl">
+          The reference is split across six sections. Files live in the
+          <a
+            href="https://github.com/liva-lang/livac/tree/main/docs"
+            class="link-anim text-[color:var(--color-accent)]"
+            target="_blank"
+            rel="noopener"
+          >livac repo</a> and follow the same versioning as the compiler.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-x-12 gap-y-14">
+        {sections.map(s => (
+          <article>
+            <div class="flex items-baseline gap-3 mb-5">
+              <span class="font-mono-tight text-[11px] text-[color:var(--color-ink-3)] tracking-[0.2em]">{s.eyebrow}</span>
+              <h2 class="font-display text-xl md:text-2xl tracking-tight">{s.title}</h2>
+            </div>
+            <ul class="space-y-3 border-t hairline pt-4">
+              {s.items.map(it => (
+                <li>
+                  <a
+                    href={it.href}
+                    class="group block"
+                    target={it.href.startsWith('http') ? '_blank' : undefined}
+                    rel={it.href.startsWith('http') ? 'noopener' : undefined}
+                  >
+                    <div class="flex items-baseline justify-between gap-3">
+                      <span class="font-mono-tight text-[14px] text-[color:var(--color-ink)] group-hover:text-[color:var(--color-accent)] transition-colors">
+                        {it.label}
+                      </span>
+                      <span class="font-mono-tight text-[11px] text-[color:var(--color-ink-3)] group-hover:text-[color:var(--color-ink-2)] transition-colors">
+                        →
+                      </span>
+                    </div>
+                    <div class="text-[13px] text-[color:var(--color-ink-3)] mt-0.5" set:html={it.sub
+                      .replaceAll(/`([^`]+)`/g, '<code class="font-mono-tight text-[12px] text-[color:var(--color-ink-2)]">$1</code>')
+                    } />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

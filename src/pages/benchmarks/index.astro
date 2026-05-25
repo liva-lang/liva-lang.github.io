@@ -1,0 +1,159 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+// All numbers come straight from livac/benchmarks/RESULTS.md (2026-05-07).
+const suites = [
+  {
+    name: 'strings',
+    rows: [
+      { metric: 'Line processing', liva: 157, rust: 150 },
+      { metric: 'CSV building',    liva: 105, rust: 105 },
+      { metric: 'Word counting',   liva:  93, rust:  96 },
+    ],
+  },
+  {
+    name: 'collections',
+    rows: [
+      { metric: 'Array fill+sum',     liva:  50, rust:  45 },
+      { metric: 'Filter+Map',         liva:  28, rust:  22 },
+      { metric: 'Map build+lookup',   liva: 171, rust: 156 },
+      { metric: 'Sort',               liva:  64, rust:  64 },
+    ],
+  },
+  {
+    name: 'classes',
+    rows: [
+      { metric: 'Shape compute', liva:  16, rust:  15 },
+      { metric: 'Vec2 ops',      liva: 115, rust: 115 },
+      { metric: 'Particle sim',  liva:  50, rust: 111 },
+    ],
+  },
+];
+
+// Pre-compute max for bar widths in each suite, capped at max(liva, rust) per row.
+const suitesWithMax = suites.map(s => ({
+  ...s,
+  max: Math.max(...s.rows.flatMap(r => [r.liva, r.rust])),
+}));
+---
+
+<Layout title="Benchmarks — Liva" description="How Liva-generated Rust compares to hand-written Rust.">
+  <Nav />
+  <main class="border-b hairline">
+    <section class="py-20 md:py-28 border-b hairline">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="section-num mb-3">§ · benchmarks</div>
+        <h1 class="font-display text-4xl md:text-5xl leading-tight tracking-tight">
+          Native speed.<br/>Nothing in the way.
+        </h1>
+        <p class="mt-4 text-[color:var(--color-ink-2)] max-w-3xl">
+          Liva compiles to Rust, so when the codegen is honest there's no runtime overhead.
+          The tables below come straight from
+          <a
+            href="https://github.com/liva-lang/livac/blob/main/benchmarks/RESULTS.md"
+            class="link-anim text-[color:var(--color-accent)]"
+            target="_blank"
+            rel="noopener"
+          >benchmarks/RESULTS.md</a> — 5 runs per binary, median reported, executed against
+          self-hosted gen-2 release with <code class="font-mono-tight text-[13px]">rustc 1.93.1</code>.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-6 space-y-16">
+        {suitesWithMax.map(s => (
+          <article>
+            <h2 class="font-display text-2xl md:text-3xl tracking-tight mb-6">
+              <span class="text-[color:var(--color-ink-3)] font-mono-tight text-base mr-3">$</span>
+              {s.name}
+            </h2>
+
+            <div class="border hairline overflow-hidden">
+              <div class="grid grid-cols-12 gap-4 px-5 py-3 bg-[color:var(--color-paper-2)] border-b hairline font-mono-tight text-[11px] uppercase tracking-[0.15em] text-[color:var(--color-ink-3)]">
+                <div class="col-span-4">Metric</div>
+                <div class="col-span-3 text-right">Liva (ms)</div>
+                <div class="col-span-3 text-right">Rust (ms)</div>
+                <div class="col-span-2 text-right">Ratio</div>
+              </div>
+
+              {s.rows.map(r => {
+                const ratio = r.liva / r.rust;
+                const ratioStr = ratio.toFixed(2) + 'x';
+                const ratioColor = ratio <= 1.01
+                  ? 'var(--color-leaf)'
+                  : ratio <= 1.15
+                    ? 'var(--color-ink)'
+                    : 'var(--color-accent)';
+                const livaW = (r.liva / s.max) * 100;
+                const rustW = (r.rust / s.max) * 100;
+                return (
+                  <div class="grid grid-cols-12 gap-4 px-5 py-4 border-b hairline last:border-b-0 items-center">
+                    <div class="col-span-4 text-[14px]">{r.metric}</div>
+                    <div class="col-span-3">
+                      <div class="flex items-center gap-2 justify-end">
+                        <div class="h-1.5 bg-[color:var(--color-accent)]" style={`width: ${livaW}%; max-width: 90%`} />
+                        <span class="font-mono-tight text-[13px] tabular-nums w-12 text-right">{r.liva}</span>
+                      </div>
+                    </div>
+                    <div class="col-span-3">
+                      <div class="flex items-center gap-2 justify-end">
+                        <div class="h-1.5 bg-[color:var(--color-ink-2)]" style={`width: ${rustW}%; max-width: 90%`} />
+                        <span class="font-mono-tight text-[13px] tabular-nums w-12 text-right">{r.rust}</span>
+                      </div>
+                    </div>
+                    <div class="col-span-2 text-right font-mono-tight text-[13px] tabular-nums" style={`color: ${ratioColor}`}>
+                      {ratioStr}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+        ))}
+
+        <div class="border hairline p-6 md:p-8 bg-[color:var(--color-paper-2)]">
+          <h3 class="font-display text-xl tracking-tight mb-3">How to read this</h3>
+          <ul class="space-y-2 text-[14px] text-[color:var(--color-ink-2)]">
+            <li class="flex gap-3">
+              <span class="text-[color:var(--color-accent)] font-mono-tight">›</span>
+              <span><strong class="text-[color:var(--color-ink)]">Ratio close to 1.00x</strong> means Liva matches hand-written Rust. Most rows are within 10%.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-[color:var(--color-accent)] font-mono-tight">›</span>
+              <span><strong class="text-[color:var(--color-ink)]">Sub-1.00x</strong> (e.g. <code class="font-mono-tight text-[13px]">0.45x</code> on Particle sim) means the Liva binary beats the Rust reference — usually because the chosen idiomatic Rust spelling and Liva's codegen happen to favour different inlining decisions.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-[color:var(--color-accent)] font-mono-tight">›</span>
+              <span>Each row is the <strong>median of 5 runs</strong>; raw outputs are linked above.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="text-[color:var(--color-accent)] font-mono-tight">›</span>
+              <span>Compile times and binary sizes are tracked separately in
+                <a
+                  href="https://github.com/liva-lang/livac/blob/main/benchmarks/COMPILE_SPEED.md"
+                  class="link-anim text-[color:var(--color-accent)]"
+                  target="_blank"
+                  rel="noopener"
+                >benchmarks/COMPILE_SPEED.md</a>.
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="pt-2 text-center font-mono-tight text-[12px] text-[color:var(--color-ink-3)]">
+          full results, raw runs, environment →
+          <a
+            href="https://github.com/liva-lang/livac/blob/main/benchmarks/RESULTS.md"
+            class="link-anim text-[color:var(--color-accent)] ml-1"
+            target="_blank"
+            rel="noopener"
+          >RESULTS.md</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
