@@ -5,6 +5,20 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.4.0',
+    date: '2026-05-27',
+    title: 'Null-coalescing operator',
+    headline: '`x ?? fallback` end-to-end — lexer, parser, codegen, docs.',
+    bullets: [
+      'New binary operator `??` with right-associativity (chains correctly: `a ?? b ?? c`).',
+      'Codegen no longer emits a spurious `.unwrap()` on collection getters when followed by `??`.',
+      'New e2e selfhost fixture `app29_coalesce.liva` exercising the operator across the toolchain.',
+      'Benchmarks regenerated (Liva/Rust 5-run median): worst 1.17×, best 0.44× — within the ≤1.20× target.',
+      'Docs (`QUICK_REFERENCE`, `language-reference/operators.md`, `skills/liva-lang`) refreshed.',
+      'VS Code extension v0.17.1: syntax highlighting + snippet `coalesce` for `??`.',
+    ],
+  },
+  {
     version: '2.3.0',
     date: '2026-05-21',
     title: 'Tooling completion',

@@ -42,14 +42,25 @@ const phases = [
   },
   {
     range: 'v2.4',
+    status: 'shipped',
+    title: 'Null-coalescing operator',
+    notes: [
+      'New `??` binary operator, right-associative — chains as `a ?? b ?? c`.',
+      'Codegen avoids spurious `.unwrap()` on collection getters before `??`.',
+      'E2E selfhost fixture `app29_coalesce.liva` keeps the toolchain honest.',
+      'Benchmarks regenerated (worst 1.17×, best 0.44×).',
+      'VS Code extension v0.17.1 — syntax highlighting + `coalesce` snippet.',
+    ],
+  },
+  {
+    range: 'v2.5 — v2.x',
     status: 'in-progress',
     title: 'Language polish (next)',
     notes: [
       'Optional chaining `obj?.field?.method()` — desugars cleanly to `.as_ref().and_then(...)`.',
-      'Null coalescing `??` to complement `or default`.',
       'Pattern matching guards: `case Foo(x) if x > 10`.',
-      'Linter rules W005 (unused function), W006 (var should be const), W007 (dead private field).',
       'Parser error recovery — collect multiple diagnostics before aborting.',
+      'B112 — `defer` + same-scope mutation borrow conflict (final decision pending).',
     ],
   },
   {

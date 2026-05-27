@@ -7,7 +7,7 @@ const tabs = [
     cmd: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac_amd64.deb -o livac.deb
 sudo dpkg -i livac.deb`,
     out: `livac --version
-liva 2.3.0 (x86_64-unknown-linux-gnu)`,
+liva 2.4.0 (x86_64-unknown-linux-gnu)`,
   },
   {
     key: 'macos',
@@ -16,7 +16,7 @@ liva 2.3.0 (x86_64-unknown-linux-gnu)`,
     cmd: `curl -L https://github.com/liva-lang/livac/releases/latest/download/livac-macos-arm64.tar.gz | tar xz
 sudo mv livac /usr/local/bin/`,
     out: `livac --version
-liva 2.3.0 (aarch64-apple-darwin)`,
+liva 2.4.0 (aarch64-apple-darwin)`,
   },
   {
     key: 'windows',
@@ -27,7 +27,7 @@ liva 2.3.0 (aarch64-apple-darwin)`,
   -OutFile livac.zip
 Expand-Archive livac.zip C:\\livac`,
     out: `livac --version
-liva 2.3.0 (x86_64-pc-windows-msvc)`,
+liva 2.4.0 (x86_64-pc-windows-msvc)`,
   },
   {
     key: 'source',
@@ -38,7 +38,7 @@ cd livac
 cargo build --release
 sudo cp target/release/livac /usr/local/bin/`,
     out: `livac --version
-liva 2.3.0 (built from source)`,
+liva 2.4.0 (built from source)`,
   },
 ];
 ---
