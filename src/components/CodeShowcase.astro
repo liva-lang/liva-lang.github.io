@@ -95,27 +95,30 @@ main() {
   {
     label: 'enums',
     title: 'Enums & pattern matching',
-    code: `// Recursive enum — fields are auto-boxed
-enum Tree {
-    Leaf,
-    Node(value: number, left: Tree, right: Tree)
+    code: `// Variants can carry payloads
+enum Shape {
+    Circle(radius: number),
+    Rectangle(width: number, height: number),
+    Triangle(base: number, height: number)
 }
 
-depth(t: Tree): number => switch t {
-    Tree.Leaf => 0,
-    Tree.Node(_, l, r) => 1 + Math.max(depth(l), depth(r))
+area(s: Shape): number => switch s {
+    Shape.Circle(r)        => 3.14 * r * r,
+    Shape.Rectangle(w, h)  => w * h,
+    Shape.Triangle(b, h)   => b * h / 2
 }
 
 main() {
-    let t = Tree.Node(10,
-              Tree.Node(5, Tree.Leaf, Tree.Leaf),
-              Tree.Node(15, Tree.Leaf,
-                Tree.Node(20, Tree.Leaf, Tree.Leaf)))
+    let shapes = [
+        Shape.Circle(5),
+        Shape.Rectangle(4, 6),
+        Shape.Triangle(3, 8)
+    ]
 
-    print($"depth = {depth(t)}")  // 3
+    for s in shapes => print($"area = {area(s)}")
 
-    // Switch is exhaustive — compiler enforces E0904
-    // if any variant is missing in an expression-position switch.
+    // switch is exhaustive: adding a new variant
+    // without updating area() is a compile error (E0904).
 }`,
   },
   {
@@ -159,25 +162,27 @@ main() {
 }
 
 main() {
-    // async — I/O on the runtime
+    // async — schedules I/O on the runtime.
+    // The binding awaits implicitly when the value is read.
     let body, err = async fetchUser(1)
-    if err { Log.warn("fetch failed", err) }
+    if err => Log.warn("fetch failed", err)
+    print($"got {body.length} bytes")
 
-    // par — CPU-bound work on its own thread
+    // par — CPU-bound work on a worker thread.
+    // Same implicit-await rule applies to the binding.
     let result = par heavyMath(1_000_000)
+    print($"sum = {result}")
 
-    // task — explicit handle, then await
+    // task — explicit handle. Do other work, then await when ready.
     let t = task async fetchUser(2)
+    Log.info("doing other work meanwhile…")
     let body2, err2 = await t
+    print($"second user: {body2.length} bytes")
 
-    // Parallel collections via .par()
+    // Parallel collections via .par() — fan-out under the hood.
     let nums = [1, 2, 3, 4, 5]
     let doubled = nums.par().map(x => x * 2)
-
-    // Data-parallel for with explicit policy
-    for par item in items with chunk 2 threads 4 {
-        process(item)
-    }
+    print(doubled)
 }`,
   },
   {
@@ -245,16 +250,17 @@ describe("math utils", () => {
   {
     label: 'rust',
     title: 'Drop into Rust when you need to',
-    code: `main() {
+    code: `// Declare a crate at the top of the file (with version + features)
+use rust "chrono" version "0.4"
+use rust "uuid" version "1.6" features ["v4"]
+
+main() {
     // Inline Rust block — typed expression
     let timestamp = rust {
         use chrono::Utc;
         Utc::now().format("%H:%M:%S").to_string()
     }
     print($"now: {timestamp}")
-
-    // Declare a crate with version + features
-    use rust uuid version "1.6" features ["v4"]
 
     let id = rust {
         use uuid::Uuid;

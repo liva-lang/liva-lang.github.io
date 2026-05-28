@@ -18,19 +18,21 @@ import { Server, Response } from "http"
 User { id: number; name: string }
 
 main() {
-    let db, err = DB.open("app.db")
-    if err => fail err
+    let db = DB.open("app.db") or fail "cannot open app.db"
     defer DB.close(db)
 
     let app = Server.create()
 
     app.get("/users/:id", (req) => {
-        let id = req.params.get("id")
-        let rows, e = DB.query(db,
+        let id = req.params.get("id") ?? "0"
+        let rows, err = DB.query(db,
             "SELECT id, name FROM users WHERE id = ?", [id])
-        if e => return Response.status(500).text(e)
+        if err => return Response.status(500).text(err)
         if rows.length == 0 => return Response.status(404).text("not found")
-        return Response.json(rows[0])
+
+        let row = rows[0]
+        let user = User { id: row["id"], name: row["name"] }
+        return Response.json(user)
     })
 
     Log.info("listening on :3000")
@@ -53,13 +55,13 @@ const codeHtml = highlighter.codeToHtml(heroCode, { lang: 'liva', theme: 'github
       <!-- Left: headline -->
       <div class="lg:col-span-7">
         <h1 class="font-display text-[3.25rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[0.95] tracking-tight">
-          A language<br />
-          that feels<br />
-          <span class="italic font-serif text-[color:var(--color-accent)]">honest.</span>
+          Modern syntax,<br />
+          native binaries,<br />
+          <span class="italic font-serif text-[color:var(--color-accent)]">zero runtime.</span>
         </h1>
 
         <p class="mt-8 max-w-xl text-lg text-[color:var(--color-ink-2)] leading-relaxed">
-          Liva reads like Python, runs like Rust. No garbage collector, no hidden cost — your
+          Liva reads like TypeScript and runs like Rust. No garbage collector, no hidden cost — your
           code compiles down to a native binary you can <span class="font-mono-tight text-[0.95em]">cat /usr/local/bin</span>.
         </p>
 
