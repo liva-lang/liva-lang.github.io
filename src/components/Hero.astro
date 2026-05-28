@@ -59,8 +59,8 @@ const codeHtml = highlighter.codeToHtml(heroCode, { lang: 'liva', theme: 'github
         </h1>
 
         <p class="mt-8 max-w-xl text-lg text-[color:var(--color-ink-2)] leading-relaxed">
-          Liva reads like TypeScript and runs like Rust. No garbage collector, no hidden cost — your
-          code compiles down to a native binary you can <span class="font-mono-tight text-[0.95em]">cat /usr/local/bin</span>.
+          Liva reads like TypeScript and runs like Rust. No garbage collector,
+          no hidden cost &mdash; one file in, one native binary out.
         </p>
 
         <div class="mt-10 flex flex-wrap items-center gap-4">
@@ -68,7 +68,8 @@ const codeHtml = highlighter.codeToHtml(heroCode, { lang: 'liva', theme: 'github
             href="#install"
             class="inline-flex items-center gap-2 px-5 py-3 bg-[color:var(--color-ink)] text-[color:var(--color-paper)] font-mono-tight text-sm hover:bg-[color:var(--color-accent)] transition-colors"
           >
-            <span>$ curl -sSL install.liva-lang.dev | sh</span>
+            <span>Install Liva</span>
+            <span aria-hidden="true">↓</span>
           </a>
           <a href="#code" class="font-mono-tight text-sm link-anim text-[color:var(--color-ink-2)] hover:text-[color:var(--color-ink)]">
             see real code →
