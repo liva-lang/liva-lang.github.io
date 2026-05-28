@@ -188,9 +188,7 @@ main() {
   {
     label: 'http',
     title: 'HTTP server, batteries included',
-    code: `import { Server, Response } from "http"
-
-main() {
+    code: `main() {
     let db, err = DB.open("app.db")
     if err => fail err
     defer DB.close(db)
