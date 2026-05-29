@@ -16,24 +16,27 @@ const examples = [
   {
     label: 'types',
     title: 'Types & inference',
-    code: `// Liva infers what you don't write
-let count = 42                     // number (i32)
-let ratio: float = 3.14            // float (f64)
-let name: string = "Alice"         // explicit type
-let active = true                  // bool
-const MAX: number = 100            // immutable
+    code: `main() {
+    // Liva infers what you don't write
+    let count = 42                     // number (i32)
+    let ratio: float = 3.14            // float (f64)
+    let name: string = "Alice"         // explicit type
+    let active = true                  // bool
+    const MAX: number = 100            // immutable
 
-// Collections
-let scores = [90, 85, 92, 88]               // [number]
-let user = Map { "name": "Ann", "city": "NY" }  // Map<string,string>
-let tags = Set { "rust", "liva" }           // Set<string>
+    // Collections
+    let scores = [90, 85, 92, 88]                   // [number]
+    let user = Map { "name": "Ann", "city": "NY" }  // Map<string,string>
+    let tags = Set { "rust", "liva" }               // Set<string>
 
-// Destructuring
-let [first, second] = scores
-let [head, ...tail] = scores
+    // Indexing + methods
+    let top = scores[0]
+    let avg = scores.reduce(0, (a, b) => a + b) / scores.length
 
-// String templates
-let greeting = $"hi {name}, top score: {scores[0]}"`,
+    // String templates
+    let greeting = $"hi {name}, top={top}, avg={avg}, max={MAX}"
+    print(greeting)
+}`,
   },
   {
     label: 'errors',
@@ -50,16 +53,16 @@ main() {
     let port, err = parsePort("8080")
     if err { print($"error: {err}") }
 
-    // or fail → propagate the error
-    let cfg = File.read("config.json") or fail
-
     // or <default> → heal with a fallback
     let timeout = parsePort("nope") or 3000
 
     // or fail "msg" → propagate with extra context
     let port2 = parsePort("443") or fail "bad port"
 
-    Log.info($"port={port}, timeout={timeout}")
+    // or fail → propagate the underlying error as-is
+    let port3 = parsePort("22") or fail
+
+    Log.info($"port={port}, port2={port2}, port3={port3}, timeout={timeout}")
 }`,
   },
   {
@@ -97,22 +100,22 @@ main() {
     title: 'Enums & pattern matching',
     code: `// Variants can carry payloads
 enum Shape {
-    Circle(radius: number),
-    Rectangle(width: number, height: number),
-    Triangle(base: number, height: number)
+    Circle(radius: float),
+    Rectangle(width: float, height: float),
+    Triangle(base: float, height: float)
 }
 
-area(s: Shape): number => switch s {
+area(s: Shape): float => switch s {
     Shape.Circle(r)        => 3.14 * r * r,
     Shape.Rectangle(w, h)  => w * h,
-    Shape.Triangle(b, h)   => b * h / 2
+    Shape.Triangle(b, h)   => b * h / 2.0
 }
 
 main() {
     let shapes = [
-        Shape.Circle(5),
-        Shape.Rectangle(4, 6),
-        Shape.Triangle(3, 8)
+        Shape.Circle(5.0),
+        Shape.Rectangle(4.0, 6.0),
+        Shape.Triangle(3.0, 8.0)
     ]
 
     for s in shapes => print($"area = {area(s)}")
@@ -133,17 +136,17 @@ Printable {
 User : Printable {
     name: string
     email: string
-    _created: number       // _-prefix = private (no "private" keyword)
+    _createdMs: number     // _-prefix = private (no "private" keyword)
 
     constructor(name: string, email: string) {
         this.name = name
         this.email = email
-        this._created = Date.now()
+        this._createdMs = Date.timestamp()
     }
 
     format(): string => $"{this.name} <{this.email}>"
 
-    ageMs(): number => Date.now() - this._created
+    ageMs(): number => Date.timestamp() - this._createdMs
 }
 
 main() {
@@ -155,34 +158,24 @@ main() {
   {
     label: 'concur',
     title: 'Concurrency',
-    code: `fetchUser(id: number): string {
-    let resp, err = HTTP.get($"https://api/users/{id}")
-    if err => fail err
-    return resp.body
+    code: `// CPU-bound work (deterministic for the demo)
+heavyMath(n: number): number {
+    let acc = 0
+    for i in 0..n => acc += i
+    return acc
 }
 
 main() {
-    // async — schedules I/O on the runtime.
-    // The binding awaits implicitly when the value is read.
-    let body, err = async fetchUser(1)
-    if err => Log.warn("fetch failed", err)
-    print($"got {body.length} bytes")
-
     // par — CPU-bound work on a worker thread.
-    // Same implicit-await rule applies to the binding.
-    let result = par heavyMath(1_000_000)
-    print($"sum = {result}")
+    // The binding awaits implicitly when the value is read.
+    let sum1 = par heavyMath(10_000)
+    print($"sum1 = {sum1}")
 
-    // task — explicit handle. Do other work, then await when ready.
-    let t = task async fetchUser(2)
+    // task — explicit handle. Kick off, do other work, then await.
+    let t = task par heavyMath(20_000)
     Log.info("doing other work meanwhile…")
-    let body2, err2 = await t
-    print($"second user: {body2.length} bytes")
-
-    // Parallel collections via .par() — fan-out under the hood.
-    let nums = [1, 2, 3, 4, 5]
-    let doubled = nums.par().map(x => x * 2)
-    print(doubled)
+    let sum2 = await t
+    print($"sum2 = {sum2}")
 }`,
   },
   {
@@ -220,10 +213,23 @@ main() {
   {
     label: 'tests',
     title: 'Built-in tests',
-    code: `// run with:  livac test
+    code: `// run with:  livac test math.test.liva
 // file:       math.test.liva
 import { describe, test, beforeEach, afterEach, expect } from "liva/test"
-import { square, clamp, parseAge } from "./math"
+
+square(x: number): number => x * x
+
+clamp(x: number, lo: number, hi: number): number {
+    if x < lo => return lo
+    if x > hi => return hi
+    return x
+}
+
+parseAge(s: string): number {
+    let n, err = parseInt(s)
+    if err => fail $"not a number: {s}"
+    return n
+}
 
 describe("math utils", () => {
     beforeEach(() => Log.debug("setup"))
