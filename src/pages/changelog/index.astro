@@ -5,6 +5,62 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.7.2',
+    date: '2026-06-01',
+    title: 'Nightly CI hotfix',
+    headline: 'Chained-filter codegen regression patched; nightly green again.',
+    bullets: [
+      '`arr.map(...).filter(...)` no longer emits a trailing `.cloned()` when the filter input is another iterator-producing method — fixes `E0271/E0631/E0599` in the `array_pipeline` benchmark.',
+      '`cargo fmt --all` sweep on the `liva-tools/` crate restores the Rustfmt gate.',
+      'No language changes; pure release-engineering and codegen polish.',
+    ],
+  },
+  {
+    version: '2.7.1',
+    date: '2026-05-29',
+    title: 'Desktop-examples sweep',
+    headline: 'Eight codegen fixes uncovered by running every homepage snippet end-to-end.',
+    bullets: [
+      '`livac run` / `livac build` now surface real `cargo` errors instead of silently failing.',
+      'Stdlib tuple `or fail` / `or <default>`, chained `Response.status(N).text(body)`, point-free `forEach(print)`, fallible `main` Display output, defer on `DB.close` / `File.close`, err-binding `toBeTruthy()` — all fixed.',
+      'All 9 snippets in the website `CodeShowcase` now build and run unmodified through `livac run` / `livac test`.',
+    ],
+  },
+  {
+    version: '2.7.0',
+    date: '2026-05-28',
+    title: '`livac update` ported to gen-2',
+    headline: 'Self-update flow rewritten in pure Liva; `Sys.{exe,os,arch}` lands in the stdlib.',
+    bullets: [
+      '`Sys.exe()` / `Sys.os()` / `Sys.arch()` — portable runtime introspection.',
+      '`Process.exec` and `Process.spawn` now select the host shell at runtime (`cmd /C` on Windows, `sh -c` elsewhere).',
+      '`livac update` reimplemented in `compiler/src/main.liva` — queries GitHub, downloads, extracts, atomically replaces the running binary.',
+      '`(self-hosted)` banner dropped from CLI tagline — it is the default now.',
+    ],
+  },
+  {
+    version: '2.6.0',
+    date: '2026-05-28',
+    title: 'Self-host binary on every platform',
+    headline: 'gen-2 ships as the installed compiler on Linux, macOS x64/arm64, and Windows.',
+    bullets: [
+      'New `selfhost-source` job in `release.yml` rebuilds gen-1 → gen-2 → gen-3 and uploads the gen-2 Rust crate.',
+      'Every target in the build matrix downloads that crate and cargo-builds natively; no per-OS seed binaries needed.',
+      '`.deb` / `.rpm` / `.tar.gz` / `.zip` artifacts on every platform now contain the same canonical compiler that passes all 9 CI gates locally.',
+    ],
+  },
+  {
+    version: '2.5.0',
+    date: '2026-05-28',
+    title: 'Self-host closes the loop on Linux',
+    headline: '`.deb` / `.rpm` / `.tar.gz` now ship the gen-2 binary, not the Rust bootstrap.',
+    bullets: [
+      'Release pipeline runs `compiler/tests/rebuild_selfhost.sh` and substitutes `target/livac-gen2-release` for the Rust bootstrap before packaging.',
+      'First release where the binary inside the installer matches the one used to validate every PR.',
+      'Closes the divergence behind the v2.4.1 `??` regression — every new gen-2 feature reaches users on tag.',
+    ],
+  },
+  {
     version: '2.4.0',
     date: '2026-05-27',
     title: 'Null-coalescing operator',

@@ -2,6 +2,7 @@
 import { createHighlighter } from 'shiki';
 import fs from 'node:fs';
 import path from 'node:path';
+import { LIVA_VERSION, LIVA_HERO_TAGLINE } from '../version';
 
 const grammarPath = path.join(process.cwd(), 'src/grammars/liva.tmLanguage.json');
 const livaGrammar = JSON.parse(fs.readFileSync(grammarPath, 'utf-8'));
@@ -44,9 +45,9 @@ const codeHtml = highlighter.codeToHtml(heroCode, { lang: 'liva', theme: 'github
   <div class="max-w-6xl mx-auto px-6">
     <!-- Eyebrow -->
     <div class="flex items-center gap-3 mb-10">
-      <span class="eyebrow text-[color:var(--color-accent)]">v2.4.0</span>
+      <span class="eyebrow text-[color:var(--color-accent)]">v{LIVA_VERSION}</span>
       <span class="h-px w-8 bg-[color:var(--color-ink-3)]/40"></span>
-      <span class="eyebrow text-[color:var(--color-ink-3)]">Null-coalescing `??` · Self-hosted · Jest tests</span>
+      <span class="eyebrow text-[color:var(--color-ink-3)]">{LIVA_HERO_TAGLINE}</span>
     </div>
 
     <div class="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">

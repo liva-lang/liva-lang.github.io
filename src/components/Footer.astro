@@ -1,4 +1,6 @@
 ---
+import { LIVA_VERSION } from '../version';
+
 const cols = [
   {
     head: 'project',
@@ -41,7 +43,7 @@ const cols = [
       <div class="md:col-span-4">
         <div class="font-mono-tight font-bold text-lg mb-3">
           <span class="text-[color:var(--color-accent)]">~</span> liva
-          <span class="text-[color:var(--color-ink-3)] text-[11px] uppercase tracking-[0.2em] ml-1">v2.4.0</span>
+          <span class="text-[color:var(--color-ink-3)] text-[11px] uppercase tracking-[0.2em] ml-1">v{LIVA_VERSION}</span>
         </div>
         <p class="text-[14px] text-[color:var(--color-ink-2)] leading-relaxed max-w-sm">
           A modern programming language that compiles to Rust.<br/>
