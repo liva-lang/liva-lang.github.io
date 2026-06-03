@@ -5,6 +5,17 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.1',
+    date: '2026-06-03',
+    title: 'Build cache MVP + concurrency roadmap cleanup',
+    headline: '`livac build` / `livac run` gain a reusable build cache (`--no-cache` to bypass).',
+    bullets: [
+      'New incremental cache fingerprint for generated Rust artifacts in `build`/`run` flows; unchanged inputs can reuse prior cargo outputs.',
+      'New CLI flag `--no-cache` forces a full rebuild when validating clean output or debugging toolchain issues.',
+      'Plan 4.1 (`parallel { }`) was cancelled in roadmap docs after design review due semantic overlap with existing `async` spawn behavior.',
+    ],
+  },
+  {
     version: '2.7.2',
     date: '2026-06-01',
     title: 'Nightly CI hotfix',
