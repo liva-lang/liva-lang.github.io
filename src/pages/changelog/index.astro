@@ -5,6 +5,17 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.2',
+    date: '2026-06-03',
+    title: 'Incremental cache v2 (hashed cache dirs)',
+    headline: '`livac build` / `livac run` now back cache entries with SHA-256 keyed directories under `target/liva_cache`.',
+    bullets: [
+      'Cache key now includes compiler version, input path, release mode, and generated Rust output; cache entries live in `target/liva_cache/<hash>/`.',
+      'On cache hit, the compiler reuses the cached binary and still materializes generated Rust in the requested output directory.',
+      'CLI subcommand test suite adds cache invalidation coverage (second build hit + source change miss + new hash directory).',
+    ],
+  },
+  {
     version: '2.8.1',
     date: '2026-06-03',
     title: 'Build cache MVP + concurrency roadmap cleanup',
