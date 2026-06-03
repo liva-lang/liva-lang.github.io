@@ -13,6 +13,7 @@ const releases = [
       'Cache key now includes compiler version, input path, release mode, and generated Rust output; cache entries live in `target/liva_cache/<hash>/`.',
       'On cache hit, the compiler reuses the cached binary and still materializes generated Rust in the requested output directory.',
       'CLI subcommand test suite adds cache invalidation coverage (second build hit + source change miss + new hash directory).',
+      '`benchmarks/COMPILE_SPEED.md` now includes full-vs-incremental numbers; hot-cache rebuilds are far faster than cold/no-cache builds on representative samples.',
     ],
   },
   {
