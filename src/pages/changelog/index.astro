@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.6',
+    date: '2026-06-03',
+    title: 'Roadmap docs sweep — Plan 4 + Plan 5 closure',
+    headline: 'Reference docs updated to cover concurrency timeouts/channels, HTTP per-request options, and typed JSON shortcuts; roadmap housekeeping marked the remaining N/A items honestly.',
+    bullets: [
+      'Concurrency reference now documents `expr timeout ms` and `Channel<T>` MPSC.',
+      'HTTP reference now documents the `{ timeout, retries, backoff }` per-request options map.',
+      'JSON basics reference now documents the `JSON.getString/getInt/getFloat/getBool/getArray` shortcuts.',
+      'Roadmap items that are either covered by stronger ejecutable tests or blocked architecturally are marked N/A with the real reason instead of left dangling.',
+      'No compiler changes; self-host gen-2 == gen-3 idempotent.',
+    ],
+  },
+  {
     version: '2.8.5',
     date: '2026-06-03',
     title: 'Plan 2 cleanup — error codes E0205 + E0206',
