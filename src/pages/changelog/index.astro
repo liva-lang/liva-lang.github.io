@@ -5,6 +5,17 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.3',
+    date: '2026-06-03',
+    title: '`livac cache` inspection and cleanup',
+    headline: 'Two new subcommands let you inspect and wipe the incremental build cache.',
+    bullets: [
+      '`livac cache info` prints the active cache root (honouring `LIVA_CACHE_DIR`) and the number of entries.',
+      '`livac cache clear` removes the cache root and every entry; no-ops cleanly when the root is absent.',
+      'CLI test suite gains Test 20 covering populated → clear → empty.',
+    ],
+  },
+  {
     version: '2.8.2',
     date: '2026-06-03',
     title: 'Incremental build cache (Plan 6.3 MVP)',
