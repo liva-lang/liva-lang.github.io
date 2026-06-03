@@ -7,24 +7,14 @@ const releases = [
   {
     version: '2.8.2',
     date: '2026-06-03',
-    title: 'Incremental cache v2 (hashed cache dirs)',
-    headline: '`livac build` / `livac run` now back cache entries with SHA-256 keyed directories under `target/liva_cache`.',
+    title: 'Incremental build cache (Plan 6.3 MVP)',
+    headline: '`livac build` / `livac run` reuse a content-addressed binary cache, skipping `cargo build` when generated Rust is unchanged.',
     bullets: [
-      'Cache key now includes compiler version, input path, release mode, and generated Rust output; cache entries live in `target/liva_cache/<hash>/`.',
-      'On cache hit, the compiler reuses the cached binary and still materializes generated Rust in the requested output directory.',
-      'CLI subcommand test suite adds cache invalidation coverage (second build hit + source change miss + new hash directory).',
-      '`benchmarks/COMPILE_SPEED.md` now includes full-vs-incremental numbers; hot-cache rebuilds are far faster than cold/no-cache builds on representative samples.',
-    ],
-  },
-  {
-    version: '2.8.1',
-    date: '2026-06-03',
-    title: 'Build cache MVP + concurrency roadmap cleanup',
-    headline: '`livac build` / `livac run` gain a reusable build cache (`--no-cache` to bypass).',
-    bullets: [
-      'New incremental cache fingerprint for generated Rust artifacts in `build`/`run` flows; unchanged inputs can reuse prior cargo outputs.',
+      'Cache key is the SHA-256 of (compiler version, release flag, generated `Cargo.toml`, generated `main.rs`, module files sorted by name). Input path is excluded so the same project shares entries across working directories.',
+      'Cache root resolves to `$LIVA_CACHE_DIR`, else `$HOME/.cache/liva/build`, else `.liva-cache/`. Layout is `<root>/<sha256>/binary` only — no cargo target trees are duplicated.',
       'New CLI flag `--no-cache` forces a full rebuild when validating clean output or debugging toolchain issues.',
-      'Plan 4.1 (`parallel { }`) was cancelled in roadmap docs after design review due semantic overlap with existing `async` spawn behavior.',
+      'Hot-cache rebuild on `examples/hello-world` is ~3ms (median of 5 runs) vs ~111ms for `--no-cache` with warm cargo target — see `benchmarks/COMPILE_SPEED.md` for the methodology.',
+      'CLI suite Test 19 covers cache hit, source-change invalidation, and asserts cache entries contain only the binary. Plan 4.1 (`parallel { }`) was also cancelled this cycle due to semantic overlap with the existing async spawn model.',
     ],
   },
   {
