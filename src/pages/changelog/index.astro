@@ -5,6 +5,18 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.4',
+    date: '2026-06-03',
+    title: 'Plan 1.1 foundation — interfaces emit traits',
+    headline: 'Every Liva interface now emits a Rust `pub trait` block and every implementing class gets an `impl Trait for Class` forwarder.',
+    bullets: [
+      'Foundation step toward letting interface names be used as value types. The trait declarations + impl-for forwarders are useful per se (rust { } interop) and are the scaffolding for full type-as-storage support.',
+      'Forwarders call the inherent method on `self` and rely on Rust\'s preference for inherent over trait methods, so no recursion.',
+      'CLI Test 21 asserts the trait block, impl-for block, and runtime behaviour.',
+      'Type-as-storage (Box<dyn Iface>, [Iface] params, Iface fields) remains deferred — requires a Clone supertrait helper and type-aware call coercion.',
+    ],
+  },
+  {
     version: '2.8.3',
     date: '2026-06-03',
     title: '`livac cache` inspection and cleanup',
