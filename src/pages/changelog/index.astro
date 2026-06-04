@@ -5,6 +5,18 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.15',
+    date: '2026-06-04',
+    title: 'Plan 6.2 (MVP) — Identifier-sanitization memoization',
+    headline: 'The Rust emitter now memoizes identifier sanitization (camelCase→snake_case + reserved-keyword escaping), so each distinct identifier is transformed only once per compile instead of hundreds of times.',
+    bullets: [
+      'New emitter-scoped `_sanitizeCache: Map<string, string>` short-circuits repeated `_sanitizeName` calls.',
+      'Point-lookup only (never iterated) — the transformation stays byte-for-byte deterministic.',
+      'Self-host remains idempotent (gen-2 == gen-3, source and binary); e2e suite 62/62 green.',
+      'Safe, contained MVP of Plan 6.2: the full `Symbol(u32)` AST migration (~30 AST fields, 500+ call sites) is assessed as high-risk for a sub-1% net win and is deferred to a dedicated session.',
+    ],
+  },
+  {
     version: '2.8.14',
     date: '2026-06-04',
     title: 'Plan 6.1 — Lazy Iterator<T> (direct-form chains)',
