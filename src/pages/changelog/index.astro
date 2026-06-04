@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.10',
+    date: '2026-06-04',
+    title: 'Plan 1.1 *full* MVP³ — call-site interface coercion (params)',
+    headline: 'Free functions whose parameters are typed as an interface now auto-coerce the concrete argument at the call site: `shout(g: Greeter)` can be called directly with `shout(Bob())`, wrapping it in `Box::new(...) as Box<dyn Greeter>`.',
+    bullets: [
+      'Call site: `shout(Bob())` emits `shout(Box::new(Bob::new()) as Box<dyn Greeter>)`.',
+      'Multiple interface-typed parameters in one signature are each coerced independently.',
+      'New codegen pre-pass `_buildCallSiteParamRegistry` populates `_paramInterfaceName` (`"funcName:paramIndex" -> interfaceName`), consulted in `_emitCall`.',
+      'E2E suite 61/61 green (new "Call-site Interface Coercion" tests); self-host gen-2 == gen-3 idempotent.',
+      'Still pending: interface params on instance methods, `[Iface]` params, and Result/Option-wrapped interface returns (tracked in `ROADMAP_V3.md` Plan 1.1 *full*).',
+    ],
+  },
+  {
     version: '2.8.9',
     date: '2026-06-03',
     title: 'Plan 1.1 *full* MVP² — return-type interface coercion',
