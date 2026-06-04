@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.9',
+    date: '2026-06-03',
+    title: 'Plan 1.1 *full* MVP² — return-type interface coercion',
+    headline: 'Functions and methods returning interface-typed values now auto-coerce: `getGreeter(): Greeter` wraps the result in `Box::new(...) as Box<dyn Greeter>`, and `[Greeter]` returns wrap each element.',
+    bullets: [
+      'Scalar returns: `f(): Greeter => Bob()` emits `Box::new(Bob::new()) as Box<dyn Greeter>`.',
+      'Array returns: `f(): [Greeter] => [Bob(), Ana()]` wraps each element with the trait-object cast.',
+      'New codegen state (`_currentReturnInterface` / `_currentReturnInterfaceArray`) drives detection in functions, methods, and `return` statements.',
+      'E2E suite green; self-host gen-2 == gen-3 idempotent.',
+      'Still pending: Result/Option-wrapped interface returns and call-site param coercion (tracked in `ROADMAP_V3.md` Plan 1.1 *full* remaining work).',
+    ],
+  },
+  {
     version: '2.8.8',
     date: '2026-06-03',
     title: 'Plan 1.1 *full* MVP⁺ — interface arrays',
