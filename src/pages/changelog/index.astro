@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.13',
+    date: '2026-06-04',
+    title: 'Plan 3 — User-defined generics (native Rust monomorphization)',
+    headline: 'Generic functions and classes compile straight to Rust-native generics — zero overhead, fully type-safe — and type parameters used as `Map`/`Set` keys automatically gain the `Eq + Hash` bounds they need.',
+    bullets: [
+      'Generic functions: `identity<T>`, `firstOf<T>(xs:[T]):T?`, `pairKey<T,K>`, generic callbacks `mapAll<T,K>(xs:[T], f:(T)=>K):[K]`.',
+      'Generic classes: `Container<T> { value: T  get(): T => this.value }`.',
+      'Auto `Eq + Hash` for Map keys enables `keyBy<T,K>(xs:[T], pick:(T)=>K): Map<K,T>` with `.set()`/`.get()`.',
+      'New `collectHashableInType` + `buildTypeParamStrEx` walk params + return type and bound the right type params.',
+      'New doc `language-reference/generics.md`; E2E suite green; self-host gen-2 == gen-3 idempotent.',
+    ],
+  },
+  {
     version: '2.8.12',
     date: '2026-06-04',
     title: 'Plan 1.1 *full* MVP⁶ — Result/Option-wrapped interface returns',
