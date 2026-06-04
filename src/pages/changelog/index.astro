@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.12',
+    date: '2026-06-04',
+    title: 'Plan 1.1 *full* MVP⁶ — Result/Option-wrapped interface returns',
+    headline: 'Interface coercion now covers `Iface?` (optional) and `Iface!` (fallible) return types, completing automatic coercion in every context — no manual `Box::new` is ever required.',
+    bullets: [
+      'Optional returns: `pickShape(k): Describable?` wraps in `Some(Box::new(...) as Box<dyn Describable>)`; a `null` literal collapses to `None`.',
+      'Fallible returns: `buildShape(k): Describable!` wraps in `Ok(Box::new(...) as Box<dyn Describable>)`.',
+      'Works for free functions, block methods and arrow methods alike.',
+      'New emitter state `_currentReturnInterfaceOptional`/`_currentReturnInterfaceFallible` + helper `_emitWrappedIfaceReturn`.',
+      'E2E suite green with 5 new tests (optional ×3, fallible ×2); self-host gen-2 == gen-3 idempotent.',
+    ],
+  },
+  {
     version: '2.8.11',
     date: '2026-06-04',
     title: 'Plan 1.1 *full* MVP⁴/⁵ — array & method-call interface coercion',
