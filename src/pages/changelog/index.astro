@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.11',
+    date: '2026-06-04',
+    title: 'Plan 1.1 *full* MVP⁴/⁵ — array & method-call interface coercion',
+    headline: 'Interface coercion now extends to array-typed params `f(xs: [Iface])` and instance-method params `obj.method(iface)` (scalar and array), completing every non-Result/Option coercion context.',
+    bullets: [
+      'Array params: `sumAll([Box(2,3), Circle(4)])` wraps each element in `Box::new(...) as Box<dyn Measurable>` (with `&` prefix for borrowed collection params).',
+      'Method-call coercion: `reporter.report(Box(3,4))` resolves the receiver class and coerces the interface argument like a free function.',
+      '`_buildCallSiteParamRegistry` now walks class methods (`ClassName.methodName:idx`); new `_paramInterfaceArrayName` map + `_emitIfaceArrayArg` helper.',
+      'E2E suite 61/61 green with 6 new tests (array params ×3, method-call ×3); self-host gen-2 == gen-3 idempotent.',
+      'Remaining: Result/Option-wrapped interface returns (Plan 1.1 *full* tail).',
+    ],
+  },
+  {
     version: '2.8.10',
     date: '2026-06-04',
     title: 'Plan 1.1 *full* MVP³ — call-site interface coercion (params)',
