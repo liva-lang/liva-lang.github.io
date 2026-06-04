@@ -5,6 +5,19 @@ import Footer from '../../components/Footer.astro';
 
 const releases = [
   {
+    version: '2.8.14',
+    date: '2026-06-04',
+    title: 'Plan 6.1 — Lazy Iterator<T> (direct-form chains)',
+    headline: 'Lazy `Iterator<T>` sequences compile to native Rust iterators — values are produced on demand and chained transformations run element-by-element with zero allocation until a terminal step.',
+    bullets: [
+      'Three sources: `Iterator.range(start, end)` (finite), `Iterator.of(array)` (wrap an array), `Iterator.generate(closure)` (infinite, via `from_fn`).',
+      'Chainable lazy operators `map` / `filter` / `take` / `drop` plus terminals `toArray()`, `forEach(f)`, `reduce(init, f)`.',
+      'Example: `Iterator.range(1, 100).filter((x) => x % 2 == 0).take(3).toArray()` → `[2, 4, 6]`.',
+      '`Iterator<T>` return type lowers to Rust `impl Iterator<Item = T>`. Constructor is `generate` (not `from` — reserved).',
+      'New doc `language-reference/stdlib/iterator.md`; e2e 62/62 green (`iterator.test.liva`); self-host gen-2 == gen-3 idempotent.',
+    ],
+  },
+  {
     version: '2.8.13',
     date: '2026-06-04',
     title: 'Plan 3 — User-defined generics (native Rust monomorphization)',
